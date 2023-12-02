@@ -1,2 +1,1 @@
-# nest_playground
-nestjs playground
+## 항해 플러스와 함께하는 역량 강화 프로젝트
