@@ -44,5 +44,5 @@ jobs:
         run: echo "::set-output name=tag::$(date +'%Y.%m.%d.%H%M%S')"
       - name: docker image push to ECR
         run: |
-          docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:${{ steps.generate_image_tag.outputs.tag }} .
+          docker build -f ./Dockerfile.production -t ${{ secrets.ECR_REPOSITORY_URI }}:${{ steps.generate_image_tag.outputs.tag }} .
           docker push ${{ secrets.ECR_REPOSITORY_URI }}:${{ steps.generate_image_tag.outputs.tag }}
