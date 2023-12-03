@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 on:
   push:
     branches:
@@ -33,3 +33,17 @@ jobs:
         run: |
           npm run lint
           npm test
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: generate iamge tag
+        id: generate_image_tag
+        run: echo "::set-output name=tag::$(date +'%Y.%m.%d.%H%M%S')"
+      - name: docker image push to ECR
+        run: |
+          $(aws ecr get-login --no-include-email --region ${{ secrets.AWS_REGION }})
+          docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:${{ steps.generate_image_tag.outputs.tag }} .
+          docker push ${{ secrets.ECR_REPOSITORY_URI }}:${{ steps.generate_image_tag.outputs.tag }}
