@@ -44,5 +44,6 @@ jobs:
         run: echo "::set-output name=tag::$(date +'%Y.%m.%d.%H%M%S')"
       - name: docker image push to ECR
         run: |
+          $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com)
           docker build -f ./Dockerfile.production -t ${{ secrets.ECR_REPOSITORY_URI }}:${{ steps.generate_image_tag.outputs.tag }} .
           docker push ${{ secrets.ECR_REPOSITORY_URI }}:${{ steps.generate_image_tag.outputs.tag }}
