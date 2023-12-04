@@ -42,8 +42,14 @@ jobs:
       - name: generate iamge tag
         id: generate_image_tag
         run: echo "::set-output name=tag::$(date +'%Y.%m.%d.%H%M%S')"
-      - name: docker image push to ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME}}
+          IMAGE_TAG: ${{ steps.generate_image_tag.outputs.tag }}
         run: |
-          $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com)
-          docker build -f ./Dockerfile.production -t ${{ secrets.ECR_REPOSITORY_URI }}:${{ steps.generate_image_tag.outputs.tag }} .
-          docker push ${{ secrets.ECR_REPOSITORY_URI }}:${{ steps.generate_image_tag.outputs.tag }}
+          docker build -f ./Dockerfile.production -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
