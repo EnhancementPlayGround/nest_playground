@@ -39,7 +39,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-      - name: generate iamge tag
+      - name: generate image tag
         id: generate_image_tag
         run: echo "::set-output name=tag::$(date +'%Y.%m.%d.%H%M%S')"
       - name: Login to Amazon ECR
@@ -59,13 +59,11 @@ jobs:
         id: retrieve-task-def
         run: |
           aws ecs describe-task-definition --task-definition ${{ secrets.AWS_ECS_TASK_FAMILY_NAME }} --query taskDefinition > task-definition.json
-          cat task-definition.json
-          echo "::set-output name=task-def-file::task-definition.json"
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ steps.retrieve-task-def.outputs.task-def-file }}
+          task-definition: task-definition.json
           container-name: ${{ secrets.AWS_ECS_CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
       - name: Deploy Amazon ECS task definition
