@@ -58,7 +58,7 @@ jobs:
       - name: Retrieve most recent ECS task definition JSON file
         id: retrieve-task-def
         run: |
-          aws ecs describe-task-definition --task-definition private-user-task --query taskDefinition > task-definition.json
+          aws ecs describe-task-definition --task-definition ${{ secrets.AWS_ECS_TASK_FAMILY_NAME }} --query taskDefinition > task-definition.json
           cat task-definition.json
           echo "::set-output name=task-def-file::task-definition.json"
       - name: Fill in the new image ID in the Amazon ECS task definition
