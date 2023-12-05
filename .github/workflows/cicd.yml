@@ -46,6 +46,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       - name: Build and push docker image to Amazon ECR
+        id: build-image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME}}
@@ -53,3 +54,24 @@ jobs:
         run: |
           docker build -f ./Dockerfile.production -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+      - name: Retrieve most recent ECS task definition JSON file
+        id: retrieve-task-def
+        run: |
+          aws ecs describe-task-definition --task-definition private-user-task --query taskDefinition > task-definition.json
+          cat task-definition.json
+          echo "::set-output name=task-def-file::task-definition.json"
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.retrieve-task-def.outputs.task-def-file }}
+          container-name: ${{ secrets.AWS_ECS_CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ secrets.AWS_ECS_SERVICE_NAME }}
+          cluster: ${{ secrets.AWS_ECS_CLUSTER_NAME }}
+          wait-for-service-stability: true
