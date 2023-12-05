@@ -46,7 +46,6 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       - name: Build and push docker image to Amazon ECR
-        id: build-image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME}}
@@ -65,7 +64,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: ${{ secrets.AWS_ECS_CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
+          image: ${{ secrets.AWS_ECR_REPOSITORY_NAME}}/${{ secrets.AWS_ECR_REPOSITORY_NAME}}:${{ steps.generate_image_tag.outputs.tag }}
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
