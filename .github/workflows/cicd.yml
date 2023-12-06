@@ -57,6 +57,7 @@ jobs:
       - name: build
         run: npm run build
   deploy:
+    needs: [test, build]
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
