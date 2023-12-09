@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { User } from './model';
+import { User } from '../../../../src/services/users/domain/model';
 
 jest.mock('nanoid');
 
