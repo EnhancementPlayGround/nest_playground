@@ -1,8 +1,7 @@
-name: CI/CD
+name: pr-ci
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -81,48 +80,18 @@ jobs:
         run: npm ci
       - name: build
         run: npm run build
-  deploy:
-    needs: [test, build, lint]
+  sonarcloud:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+      - uses: actions/checkout@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      - name: generate image tag
-        id: generate_image_tag
-        run: echo "::set-output name=tag::$(date +'%Y.%m.%d.%H%M%S')"
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-      - name: Build and push docker image to Amazon ECR
+          fetch-depth: 0
+      - name: Install dependencies
+        run: npm ci
+      - name: Test and coverage
+        run: npx jest --coverage --passWithNoTests
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
         env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME}}
-          IMAGE_TAG: ${{ steps.generate_image_tag.outputs.tag }}
-        run: |
-          docker build -f ./Dockerfile.production -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-      - name: Retrieve most recent ECS task definition JSON file
-        id: retrieve-task-def
-        run: |
-          aws ecs describe-task-definition --task-definition ${{ secrets.AWS_ECS_TASK_FAMILY_NAME }} --query taskDefinition > task-definition.json
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: ${{ secrets.AWS_ECS_CONTAINER_NAME }}
-          image: ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com/${{secrets.AWS_ECR_REPOSITORY_NAME}}:${{ steps.generate_image_tag.outputs.tag }}
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ secrets.AWS_ECS_SERVICE_NAME }}
-          cluster: ${{ secrets.AWS_ECS_CLUSTER_NAME }}
-          wait-for-service-stability: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
