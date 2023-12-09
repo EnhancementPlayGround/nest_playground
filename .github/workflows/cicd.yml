@@ -105,7 +105,15 @@ jobs:
           REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME}}
           IMAGE_TAG: ${{ steps.generate_image_tag.outputs.tag }}
         run: |
-          docker build -f ./Dockerfile.production -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker build \
+          --build-args NODE_ENV=${{ secrets.NODE_ENV }} \
+          --build-args PORT=${{ secrets.PORT }} \
+          --build-args DB_HOST=${{ secrets.DB_HOST }} \
+          --build-args DB_PORT=${{ secrets.DB_PORT }} \
+          --build-args DB_USER=${{ secrets.DB_USER }} \
+          --build-args DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+          --build-args DB_NAME=${{ secrets.DB_NAME }} \
+          -f ./Dockerfile.production -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
       - name: Retrieve most recent ECS task definition JSON file
