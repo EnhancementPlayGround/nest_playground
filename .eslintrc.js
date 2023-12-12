@@ -41,6 +41,16 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     'no-restricted-syntax': ['error', 'WithStatement'],
     'class-methods-use-this': 'off',
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.ts", "**/*.spec.ts","**/*.e2e-spec.ts"]}],
+    'import/no-extraneous-dependencies': [
+      'error',
+      { devDependencies: ['**/*.test.ts', '**/*.spec.ts', '**/*.e2e-spec.ts'] },
+    ],
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        varsIgnorePattern: '^_',
+        argsIgnorePattern: '^_',
+      },
+    ],
   },
 };
