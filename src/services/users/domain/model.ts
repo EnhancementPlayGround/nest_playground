@@ -1,8 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { nanoid } from 'nanoid';
+import { Aggregate } from '../../../libs/ddd';
 
 @Entity()
-export class User {
+export class User extends Aggregate {
   @PrimaryColumn()
   id!: string;
 
@@ -10,6 +11,7 @@ export class User {
   name!: string;
 
   constructor(args: { name: string }) {
+    super();
     if (args) {
       this.id = nanoid();
       this.name = args.name;
