@@ -41,14 +41,37 @@ describe('AccountController', () => {
       ]);
     });
 
-    test('query로 userId를 받아서 service로 전달한다.', () => {
-      accountController.list({ userId: 'test' });
+    test('query로 userId를 받아서 service로 전달한다.', async () => {
+      await accountController.list({ userId: 'test' });
       expect(accountServiceListSpy).toHaveBeenCalledWith('test');
     });
 
     test('query로 userId를 받아서 Account list를 반환한다.', async () => {
       const result = await accountController.list({ userId: 'test' });
       expect(result).toEqual([{ id: 'test', userId: 'test', balance: 0 }]);
+    });
+  });
+
+  describe('deposit test', () => {
+    let accountServiceDepositSpy: jest.SpyInstance;
+    beforeEach(() => {
+      accountServiceDepositSpy = jest.spyOn(accountService, 'deposit').mockResolvedValueOnce(
+        plainToClass(Account, {
+          id: 'test',
+          userId: 'test',
+          balance: 1000,
+        }),
+      );
+    });
+
+    test('userId, amount를 받아서 service로 전달한다.', async () => {
+      await accountController.deposit({ userId: 'test', amount: 1000 });
+      expect(accountServiceDepositSpy).toHaveBeenCalledWith({ userId: 'test', amount: 1000 });
+    });
+
+    test('query로 userId를 받아서 Account list를 반환한다.', async () => {
+      const result = await accountController.deposit({ userId: 'test', amount: 1000 });
+      expect(result).toEqual({ id: 'test', userId: 'test', balance: 1000 });
     });
   });
 });
