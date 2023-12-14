@@ -1,4 +1,3 @@
-import { DataSource } from 'typeorm';
 import type { ApplicationService } from '../ddd/service';
 
 export function Transactional() {
@@ -9,7 +8,7 @@ export function Transactional() {
       let result: any;
 
       try {
-        await (this.dataSource as DataSource).transaction(async (entityManager) => {
+        await this.dataSource.transaction(async (entityManager) => {
           for (const key of Object.keys(this)) {
             // @ts-expect-error
             const repository = this[key];
