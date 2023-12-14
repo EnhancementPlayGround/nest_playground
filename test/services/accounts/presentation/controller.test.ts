@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import { AccountController } from '../../../../src/services/accounts/presentation/controller';
 import { AccountService } from '../../../../src/services/accounts/application';
@@ -20,8 +20,10 @@ describe('AccountController', () => {
           provide: DataSource,
           useValue: {
             createEntityManager: jest.fn(),
+            transaction: jest.fn(),
           },
         },
+        EntityManager,
       ],
     }).compile();
 
@@ -55,13 +57,12 @@ describe('AccountController', () => {
   describe('deposit test', () => {
     let accountServiceDepositSpy: jest.SpyInstance;
     beforeEach(() => {
-      accountServiceDepositSpy = jest.spyOn(accountService, 'deposit').mockResolvedValueOnce(
-        plainToClass(Account, {
-          id: 'test',
-          userId: 'test',
-          balance: 1000,
-        }),
-      );
+      const account = plainToClass(Account, {
+        id: 'test',
+        userId: 'test',
+        balance: 1000,
+      });
+      accountServiceDepositSpy = jest.spyOn(accountService, 'deposit').mockResolvedValueOnce(account);
     });
 
     test('userId, amount를 받아서 service로 전달한다.', async () => {

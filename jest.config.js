@@ -2,6 +2,7 @@ module.exports = {
   verbose: true,
   testRegex: ['.*\\.test\\.ts$', '.*\\.spec\\.ts$'],
   testPathIgnorePatterns: ['/node_modules/'],
+  setupFiles: ['./jest.setup.js'],
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },

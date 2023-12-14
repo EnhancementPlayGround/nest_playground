@@ -1,10 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
 import { Account } from '../domain/model';
+import { stripUndefined } from '../../../libs/common';
+import { Repository } from '../../../libs/ddd/repository';
 
 @Injectable()
 export class AccountRepository extends Repository<Account> {
-  constructor(private dataSource: DataSource) {
-    super(Account, dataSource.createEntityManager());
+  entityClass = Account;
+
+  async find(conditions: { userId?: string }) {
+    return this.getManager().find(this.entityClass, {
+      where: {
+        ...stripUndefined({
+          userId: conditions.userId,
+        }),
+      },
+    });
+  }
+
+  async findOneOrFail(conditions: { userId?: string }) {
+    return this.getManager().findOneOrFail(this.entityClass, {
+      where: {
+        ...stripUndefined({
+          userId: conditions.userId,
+        }),
+      },
+    });
   }
 }

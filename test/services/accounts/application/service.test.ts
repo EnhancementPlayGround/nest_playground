@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import { AccountController } from '../../../../src/services/accounts/presentation/controller';
 import { AccountService } from '../../../../src/services/accounts/application';
@@ -20,8 +20,10 @@ describe('AccountController', () => {
           provide: DataSource,
           useValue: {
             createEntityManager: jest.fn(),
+            transaction: jest.fn(),
           },
         },
+        EntityManager,
       ],
     }).compile();
 
@@ -43,7 +45,7 @@ describe('AccountController', () => {
 
     test('parameter로 userId를 받아 repository로 전달한다.', async () => {
       await accountService.list('test');
-      expect(accountRepositoryListSpy).toHaveBeenCalledWith({ where: { userId: 'test' } });
+      expect(accountRepositoryListSpy).toHaveBeenCalledWith({ userId: 'test' });
     });
 
     test('parameter로 userId를 받아  Account list를 반환한다.', async () => {
@@ -63,28 +65,30 @@ describe('AccountController', () => {
           balance: 0,
         }),
       );
-      accountRepositorySaveSpy = jest.spyOn(accountRepository, 'save').mockResolvedValueOnce(
+      accountRepositorySaveSpy = jest.spyOn(accountRepository, 'save').mockResolvedValueOnce([
         plainToClass(Account, {
           id: 'test',
           userId: 'test',
           balance: 1000,
         }),
-      );
+      ]);
     });
 
     test('parameter로 userId를 받아 repository로 전달한다.', async () => {
       await accountService.deposit({ userId: 'test', amount: 1000 });
-      expect(accountRepositoryFindOneOrFailSpy).toHaveBeenCalledWith({ where: { userId: 'test' } });
+      expect(accountRepositoryFindOneOrFailSpy).toHaveBeenCalledWith({ userId: 'test' });
     });
 
     test('account에 입금 후 저장한다.', async () => {
       await accountService.deposit({ userId: 'test', amount: 1000 });
       expect(accountRepositorySaveSpy).toHaveBeenCalledTimes(1);
-      expect(accountRepositorySaveSpy).toHaveBeenCalledWith({
-        id: 'test',
-        userId: 'test',
-        balance: 1000,
-      });
+      expect(accountRepositorySaveSpy).toHaveBeenCalledWith([
+        {
+          id: 'test',
+          userId: 'test',
+          balance: 1000,
+        },
+      ]);
     });
   });
 });

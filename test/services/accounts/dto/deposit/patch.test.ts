@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { AccountDepositBodyDto } from '../../../../../src/services/accounts/dto/deposit';
+import { AccountDepositBodyDto } from '../../../../../src/services/accounts/dto';
 
 describe('Account Deposit Patch Dto test', () => {
   describe('DepositBodyDto 테스트', () => {
