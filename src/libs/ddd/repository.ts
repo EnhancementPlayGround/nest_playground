@@ -1,17 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager, ObjectLiteral, ObjectType } from 'typeorm';
 
-@Injectable()
 export abstract class Repository<T extends ObjectLiteral> {
   protected abstract entityClass: ObjectType<T>;
 
-  constructor(private manager: EntityManager) {}
+  @InjectEntityManager() private entityManager!: EntityManager;
 
   protected getManager(): EntityManager {
-    return this.manager;
+    return this.entityManager;
   }
 
-  async save(entity: T[]) {
-    return this.manager.save(entity, { reload: true });
+  async save(entities: T[]) {
+    return this.entityManager.save(entities);
   }
 }

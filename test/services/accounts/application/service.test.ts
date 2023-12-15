@@ -45,7 +45,7 @@ describe('AccountController', () => {
 
     test('parameter로 userId를 받아 repository로 전달한다.', async () => {
       await accountService.list('test');
-      expect(accountRepositoryListSpy).toHaveBeenCalledWith({ userId: 'test' });
+      expect(accountRepositoryListSpy).toHaveBeenCalledWith({ userId: 'test' }, { lock: { mode: 'pessimistic_read' } });
     });
 
     test('parameter로 userId를 받아  Account list를 반환한다.', async () => {
@@ -76,7 +76,10 @@ describe('AccountController', () => {
 
     test('parameter로 userId를 받아 repository로 전달한다.', async () => {
       await accountService.deposit({ userId: 'test', amount: 1000 });
-      expect(accountRepositoryFindOneOrFailSpy).toHaveBeenCalledWith({ userId: 'test' });
+      expect(accountRepositoryFindOneOrFailSpy).toHaveBeenCalledWith(
+        { userId: 'test' },
+        { lock: { mode: 'pessimistic_write' } },
+      );
     });
 
     test('account에 입금 후 저장한다.', async () => {
