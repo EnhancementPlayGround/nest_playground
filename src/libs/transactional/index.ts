@@ -1,4 +1,4 @@
-import type { DataSource, EntityManager } from 'typeorm';
+import type { EntityManager } from 'typeorm';
 
 export function injectTransactionalEntityManager(transactionalEntityManager: EntityManager) {
   return <T extends (...args: any[]) => any>(f: T) =>
