@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import type { EntityManager } from 'typeorm';
 import { Account } from '../domain/model';
 import { stripUndefined } from '../../../libs/common';
 import { Repository } from '../../../libs/ddd';
@@ -8,25 +9,33 @@ import { FindOptions, convertOptions } from '../../../libs/orm';
 export class AccountRepository extends Repository<Account> {
   entityClass = Account;
 
-  async find(conditions: { userId?: string }, options?: FindOptions) {
-    return this.getManager().find(this.entityClass, {
+  async find(args: {
+    conditions: { userId?: string };
+    options?: FindOptions;
+    transactionalEntityManager?: EntityManager;
+  }) {
+    return (args.transactionalEntityManager ?? this.getManager()).find(Account, {
       where: {
         ...stripUndefined({
-          userId: conditions.userId,
+          userId: args.conditions.userId,
         }),
       },
-      ...convertOptions(options),
+      ...convertOptions(args.options),
     });
   }
 
-  async findOneOrFail(conditions: { userId?: string }, options?: FindOptions) {
-    return this.getManager().findOneOrFail(this.entityClass, {
+  async findOneOrFail(args: {
+    conditions: { userId?: string };
+    options?: FindOptions;
+    transactionalEntityManager?: EntityManager;
+  }): Promise<Account> {
+    return (args.transactionalEntityManager ?? this.getManager()).findOneOrFail(Account, {
       where: {
         ...stripUndefined({
-          userId: conditions.userId,
+          userId: args.conditions.userId,
         }),
       },
-      ...convertOptions(options),
+      ...convertOptions(args.options),
     });
   }
 }
