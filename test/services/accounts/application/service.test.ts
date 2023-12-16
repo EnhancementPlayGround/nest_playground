@@ -6,7 +6,7 @@ import { AccountService } from '../../../../src/services/accounts/application';
 import { AccountRepository } from '../../../../src/services/accounts/infrastructure/repository';
 import { Account } from '../../../../src/services/accounts/domain/model';
 
-describe('AccountController', () => {
+describe('AccountService', () => {
   let accountService: AccountService;
   let accountRepository: AccountRepository;
 
