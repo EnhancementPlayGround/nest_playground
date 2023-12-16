@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ApplicationService } from '../../../libs/ddd';
 import { ProductRepository } from '../infrastructure/repository';
-import { Transactional } from '../../../libs/transactional';
+import { injectTransactionalEntityManager } from '../../../libs/transactional';
 
 @Injectable()
 export class ProductService extends ApplicationService {
@@ -9,9 +9,11 @@ export class ProductService extends ApplicationService {
     super();
   }
 
-  @Transactional()
   async retrieve({ id }: { id: string }) {
-    const [product] = await this.productRepository.find({ ids: [id] });
-    return product;
+    return this.dataSource.transaction(async (transactionEntityManager) => {
+      const injector = injectTransactionalEntityManager(transactionEntityManager);
+      const [product] = await injector(this.productRepository.find)({ conditions: { ids: [id] } });
+      return product;
+    });
   }
 }

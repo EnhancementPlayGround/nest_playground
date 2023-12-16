@@ -1,6 +1,6 @@
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import type { DataSource } from 'typeorm';
 
 export class ApplicationService {
-  @InjectEntityManager() protected entityManager!: EntityManager;
+  @InjectDataSource() protected dataSource!: DataSource;
 }
