@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsString, Min, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsString, Min, ValidateNested } from 'class-validator';
 
 class LineDto {
   @IsNotEmpty({ message: '상품 id가 필요합니다.' })
@@ -18,7 +18,8 @@ export class OrderBodyDto {
   userId!: string;
 
   @Type(() => LineDto)
-  @IsNotEmpty({ message: '구매 상품이 필요합니다.' })
   @ValidateNested({ each: true })
+  @IsArray({ message: '구매 상품이 필요합니다.' })
+  @ArrayMinSize(1, { message: '구매 상품이 필요합니다.' })
   lines!: LineDto[];
 }
