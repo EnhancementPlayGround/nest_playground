@@ -5,4 +5,8 @@ import { Order } from '../domain/model';
 @Injectable()
 export class OrderRepository extends Repository<Order> {
   entityClass = Order;
+
+  async sendToDataPlatform(args: { order: Order }) {
+    return Promise.resolve();
+  }
 }

@@ -55,7 +55,14 @@ export class OrderService extends ApplicationService {
         injector(this.accountRepository.save)({ target: [account] }),
       ]);
 
-      // TODO: data platform 전송
+      try {
+        await this.orderRepository.sendToDataPlatform({ order });
+      } catch (e) {
+        /**
+         * 데이터 플랫폼에 보내는건 실패해도 문제가 없어야 하기 때문에 로깅만 한다.
+         * */
+        console.error(e);
+      }
 
       return order;
     });
