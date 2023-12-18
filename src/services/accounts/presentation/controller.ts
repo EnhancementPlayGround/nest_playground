@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Patch, Query } from '@nestjs/common';
 import { AccountService } from '../application';
-import { AccountListQueryDto } from '../dto';
-import { AccountDepositBodyDto } from '../dto/deposit';
+import { AccountListQueryDto, AccountDepositBodyDto } from '../dto';
 
 @Controller('/accounts')
 export class AccountController {
@@ -13,7 +12,7 @@ export class AccountController {
     return this.accountService.list(userId);
   }
 
-  @Patch('/deposit')
+  @Patch('/')
   async deposit(@Body() body: AccountDepositBodyDto) {
     const { userId, amount } = body;
     return this.accountService.deposit({ userId, amount });
