@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ForbiddenException,
+  InternalServerErrorException,
   NotImplementedException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -8,7 +9,7 @@ import {
 export * from './filter';
 
 type ErrorOption = {
-  errorMessage: string;
+  errorMessage?: string;
 };
 
 export const badRequest = (message?: string, option?: ErrorOption) => {
@@ -26,3 +27,13 @@ export const unauthorized = (message?: string, option?: ErrorOption) => {
 export const notImplemented = (message?: string, option?: ErrorOption) => {
   return new NotImplementedException({ message, errorMessage: option?.errorMessage });
 };
+
+export const optimisticLockVersionMismatchError = (message?: string, option?: ErrorOption) => {
+  return new OptimisticLockVersionMismatchError({ message, errorMessage: option?.errorMessage });
+};
+
+export class OptimisticLockVersionMismatchError extends InternalServerErrorException {
+  constructor(args: { message?: string } & ErrorOption) {
+    super({ message: args.message, errorMessage: args.errorMessage });
+  }
+}

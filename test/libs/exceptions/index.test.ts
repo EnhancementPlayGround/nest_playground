@@ -4,7 +4,13 @@ import {
   NotImplementedException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { badRequest, forbidden, notImplemented, unauthorized } from '../../../src/libs/exceptions';
+import {
+  OptimisticLockVersionMismatchError,
+  badRequest,
+  forbidden,
+  notImplemented,
+  unauthorized,
+} from '../../../src/libs/exceptions';
 
 describe('Exception test', () => {
   test('badRequest test', async () => {
@@ -33,6 +39,13 @@ describe('Exception test', () => {
       notImplemented('test');
     } catch (err) {
       expect(err).toEqual(new NotImplementedException({ message: 'test' }));
+    }
+  });
+  test('optimisticLockVersionMismatchError test', async () => {
+    try {
+      notImplemented('test');
+    } catch (err) {
+      expect(err).toEqual(new OptimisticLockVersionMismatchError({ message: 'test' }));
     }
   });
 });
