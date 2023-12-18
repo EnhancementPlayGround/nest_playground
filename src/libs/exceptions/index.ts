@@ -28,11 +28,11 @@ export const notImplemented = (message?: string, option?: ErrorOption) => {
   return new NotImplementedException({ message, errorMessage: option?.errorMessage });
 };
 
-export const optimisticLockVersionMismatchError = (message?: string, option?: ErrorOption) => {
-  return new OptimisticLockVersionMismatchError({ message, errorMessage: option?.errorMessage });
+export const optimisticLockVersionMismatch = (message?: string, option?: ErrorOption) => {
+  return new OptimisticLockVersionMismatchException({ message, errorMessage: option?.errorMessage });
 };
 
-export class OptimisticLockVersionMismatchError extends InternalServerErrorException {
+export class OptimisticLockVersionMismatchException extends InternalServerErrorException {
   constructor(args: { message?: string } & ErrorOption) {
     super({ message: args.message, errorMessage: args.errorMessage });
   }

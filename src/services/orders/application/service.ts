@@ -48,10 +48,10 @@ export class OrderService extends ApplicationService {
       // -->
 
       // TODO: optimistic lock version mismatch error가 난다면 exponential backoff을 적용해야 한다. (with jitter)
-      await injector(this.orderRepository.save)({ target: [order] });
+      await injector(this.productRepository.save)({ target: products });
 
       await Promise.all([
-        injector(this.productRepository.save)({ target: products }),
+        injector(this.orderRepository.save)({ target: [order] }),
         injector(this.accountRepository.save)({ target: [account] }),
       ]);
 

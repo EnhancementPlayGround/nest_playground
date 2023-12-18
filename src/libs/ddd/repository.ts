@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, ObjectLiteral, ObjectType } from 'typeorm';
-import { optimisticLockVersionMismatchError } from '../exceptions';
+import { optimisticLockVersionMismatch } from '../exceptions';
 
 @Injectable()
 export abstract class Repository<T extends ObjectLiteral> {
@@ -32,12 +32,9 @@ export abstract class VersionedRepository<T extends ObjectLiteral> extends Repos
       .filter((entity) => entity.version > 1) // version === 1 이면 새로 생성한 entity 이므로 버젼 체크 할 필요 없음
       .forEach((entity) => {
         if (entity.version !== entityVersionOf[entity.id.toString()] + 1) {
-          throw optimisticLockVersionMismatchError(
-            `${entity.constructor.name}(${entity.id})'s version is mismatched.`,
-            {
-              errorMessage: "Something went wrong and we couldn't complete your request.",
-            },
-          );
+          throw optimisticLockVersionMismatch(`${entity.constructor.name}(${entity.id})'s version is mismatched.`, {
+            errorMessage: "Something went wrong and we couldn't complete your request.",
+          });
         }
       });
   }
