@@ -43,7 +43,7 @@ module.exports = {
     'class-methods-use-this': 'off',
     'import/no-extraneous-dependencies': [
       'error',
-      { devDependencies: ['**/*.test.ts', '**/*.spec.ts', '**/*.e2e-spec.ts'] },
+      { devDependencies: ['**/*.test.ts', '**/*.spec.ts', '**/*.e2e-test.ts'] },
     ],
     '@typescript-eslint/no-unused-vars': [
       'warn',
