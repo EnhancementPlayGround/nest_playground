@@ -28,6 +28,10 @@ export const notImplemented = (message?: string, option?: ErrorOption) => {
   return new NotImplementedException({ message, errorMessage: option?.errorMessage });
 };
 
+export const internalServerError = (message?: string, option?: ErrorOption) => {
+  return new InternalServerErrorException({ message, errorMessage: option?.errorMessage });
+};
+
 export const optimisticLockVersionMismatch = (message?: string, option?: ErrorOption) => {
   return new OptimisticLockVersionMismatchException({ message, errorMessage: option?.errorMessage });
 };
