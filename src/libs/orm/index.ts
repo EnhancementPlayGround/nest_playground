@@ -12,7 +12,7 @@ export const convertOptions = (options?: FindOptions) => {
   }
   return {
     take: options?.limit,
-    skip: ((options?.page || 1) - 1) * (options?.limit || 1),
+    skip: options?.page && ((options.page || 1) - 1) * (options.limit || 1),
     lock: options?.lock,
   };
 };
