@@ -121,13 +121,13 @@ jobs:
           IMAGE_TAG: ${{ steps.generate_image_tag.outputs.tag }}
         run: |
           docker build \
-          --build-args NODE_ENV=${{ secrets.NODE_ENV }} \
-          --build-args PORT=${{ secrets.PORT }} \
-          --build-args DB_HOST=${{ secrets.DB_HOST }} \
-          --build-args DB_PORT=${{ secrets.DB_PORT }} \
-          --build-args DB_USER=${{ secrets.DB_USER }} \
-          --build-args DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-          --build-args DB_NAME=${{ secrets.DB_NAME }} \
+          --build-arg NODE_ENV=${{ secrets.NODE_ENV }} \
+          --build-arg PORT=${{ secrets.PORT }} \
+          --build-arg DB_HOST=${{ secrets.DB_HOST }} \
+          --build-arg DB_PORT=${{ secrets.DB_PORT }} \
+          --build-arg DB_USER=${{ secrets.DB_USER }} \
+          --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+          --build-arg DB_NAME=${{ secrets.DB_NAME }} \
           -f ./Dockerfile.production -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
