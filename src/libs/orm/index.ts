@@ -1,3 +1,5 @@
+import { In } from 'typeorm';
+
 export type FindOptions = {
   page?: number;
   limit?: number;
@@ -14,3 +16,7 @@ export const convertOptions = (options?: FindOptions) => {
     lock: options?.lock,
   };
 };
+
+export function InValues<T>(values?: T[]) {
+  return values && In(values);
+}

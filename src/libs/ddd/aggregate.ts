@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { CreateDateColumn, UpdateDateColumn, VersionColumn } from 'typeorm';
 
 export class Aggregate {
   @CreateDateColumn()
@@ -9,4 +9,10 @@ export class Aggregate {
   @UpdateDateColumn()
   @Exclude()
   private updatedAt!: Date;
+}
+
+export class VersionedAggregate extends Aggregate {
+  @VersionColumn({ default: 1 })
+  @Exclude()
+  private version!: number;
 }
