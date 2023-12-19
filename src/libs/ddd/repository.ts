@@ -8,7 +8,7 @@ export abstract class Repository<T extends ObjectLiteral> {
 
   constructor(private entityManager: EntityManager) {}
 
-  protected getManager(): EntityManager {
+  getManager(): EntityManager {
     return this.entityManager;
   }
 
