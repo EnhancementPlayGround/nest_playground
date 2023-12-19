@@ -25,7 +25,7 @@ export class Order extends Aggregate {
   @Column()
   totalAmount!: number;
 
-  @OneToMany(() => OrderLine, (orderLine) => orderLine.order)
+  @OneToMany(() => OrderLine, (orderLine) => orderLine.order, { cascade: true, eager: true })
   lines!: OrderLine[];
 
   constructor(args: CtorType) {
