@@ -52,10 +52,12 @@ describe('ProductController', () => {
     test('parameter로 id를 받아서 Product 객체를 반환한다.', async () => {
       const result = await productController.retrieve({ id: 'test' });
       expect(result).toEqual({
-        id: 'test',
-        name: 'productName',
-        price: 10000,
-        stock: 50,
+        data: {
+          id: 'test',
+          name: 'productName',
+          price: 10000,
+          stock: 50,
+        },
       });
     });
   });

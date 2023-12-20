@@ -1,20 +1,22 @@
 import { Body, Controller, Get, Patch, Query } from '@nestjs/common';
 import { AccountService } from '../application';
-import { AccountListQueryDto, AccountDepositBodyDto } from '../dto';
+import { AccountListQueryDto, AccountDepositBodyDto, AccountDto } from '../dto';
 
 @Controller('/accounts')
 export class AccountController {
   constructor(private accountService: AccountService) {}
 
   @Get('/')
-  async list(@Query() query: AccountListQueryDto) {
+  async list(@Query() query: AccountListQueryDto): Result<AccountDto[]> {
     const { userId } = query;
-    return this.accountService.list(userId);
+    const accounts = await this.accountService.list(userId);
+    return { data: accounts };
   }
 
   @Patch('/')
-  async deposit(@Body() body: AccountDepositBodyDto) {
+  async deposit(@Body() body: AccountDepositBodyDto): Result<AccountDto> {
     const { userId, amount } = body;
-    return this.accountService.deposit({ userId, amount });
+    const account = await this.accountService.deposit({ userId, amount });
+    return { data: account };
   }
 }
