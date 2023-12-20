@@ -12,7 +12,10 @@ export class AccountService extends ApplicationService {
   async list(userId: string) {
     return this.dataSource.transaction((transactionalEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionalEntityManager);
-      return injector(this.accountRepository.find)({
+      return injector(
+        this.accountRepository,
+        'find',
+      )({
         conditions: { userId },
         options: { lock: { mode: 'pessimistic_read' } },
       });
@@ -22,12 +25,15 @@ export class AccountService extends ApplicationService {
   async deposit(args: { userId: string; amount: number }) {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionalEntityManager);
-      const account = await injector(this.accountRepository.findOneOrFail)({
+      const account = await injector(
+        this.accountRepository,
+        'findOneOrFail',
+      )({
         conditions: { userId: args.userId },
         options: { lock: { mode: 'pessimistic_write' } },
       });
       account.deposit(args.amount);
-      await injector(this.accountRepository.save)({ target: [account] });
+      await injector(this.accountRepository, 'save')({ target: [account] });
       return account;
     });
   }

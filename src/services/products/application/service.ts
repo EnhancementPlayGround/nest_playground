@@ -12,7 +12,10 @@ export class ProductService extends ApplicationService {
   async retrieve({ id }: { id: string }) {
     return this.dataSource.transaction(async (transactionEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionEntityManager);
-      const [product] = await injector(this.productRepository.find)({
+      const [product] = await injector(
+        this.productRepository,
+        'find',
+      )({
         conditions: { ids: [id] },
         options: { lock: { mode: 'pessimistic_read' } },
       });

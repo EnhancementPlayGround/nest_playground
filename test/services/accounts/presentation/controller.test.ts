@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { DataSource, EntityManager } from 'typeorm';
 import { plainToClass } from 'class-transformer';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AccountController } from '../../../../src/services/accounts/presentation/controller';
 import { AccountService } from '../../../../src/services/accounts/application';
 import { AccountRepository } from '../../../../src/services/accounts/infrastructure/repository';
@@ -24,6 +25,7 @@ describe('AccountController', () => {
           },
         },
         EntityManager,
+        EventEmitter2,
       ],
     }).compile();
 

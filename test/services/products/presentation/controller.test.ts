@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { DataSource, EntityManager } from 'typeorm';
 import { plainToClass } from 'class-transformer';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProductController } from '../../../../src/services/products/presentation/controller';
 import { ProductService } from '../../../../src/services/products/application';
 import { ProductRepository } from '../../../../src/services/products/infrastructure/repository';
@@ -24,6 +25,7 @@ describe('ProductController', () => {
           },
         },
         EntityManager,
+        EventEmitter2,
       ],
     }).compile();
 
