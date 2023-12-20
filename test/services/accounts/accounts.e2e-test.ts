@@ -42,7 +42,7 @@ describe('Product e2e', () => {
         .patch('/accounts')
         .send({ userId: 'accountTest', amount: 10000 })
         .expect(200)
-        .expect({ id: 'accountTest', userId: 'accountTest', balance: 10000 });
+        .expect({ data: { id: 'accountTest', userId: 'accountTest', balance: 10000 } });
     });
     test('여러 요청이 들어올 때 계산이 정확하게 되어야한다.', async () => {
       await repository
@@ -60,7 +60,7 @@ describe('Product e2e', () => {
       return request(app.getHttpServer())
         .get('/accounts?userId=accountTest2')
         .expect(200)
-        .expect([{ id: 'accountTest2', userId: 'accountTest2', balance: 40000 }]);
+        .expect({ data: [{ id: 'accountTest2', userId: 'accountTest2', balance: 40000 }] });
     });
   });
 
@@ -74,6 +74,6 @@ describe('Product e2e', () => {
     return request(app.getHttpServer())
       .get('/accounts?userId=accountTest')
       .expect(200)
-      .expect([{ id: 'accountTest', userId: 'accountTest', balance: 0 }]);
+      .expect({ data: [{ id: 'accountTest', userId: 'accountTest', balance: 0 }] });
   });
 });

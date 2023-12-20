@@ -38,6 +38,6 @@ describe('Product e2e', () => {
     return request(app.getHttpServer())
       .get('/products/productTest')
       .expect(200)
-      .expect({ id: 'productTest', name: 'productName', price: 10000, stock: 500 });
+      .expect({ data: { id: 'productTest', name: 'productName', price: 10000, stock: 500 } });
   });
 });

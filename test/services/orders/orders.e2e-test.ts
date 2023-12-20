@@ -55,10 +55,12 @@ describe('Product e2e', () => {
       .send({ userId: 'orderTest', lines: [{ productId: 'orderTest', quantity: 1 }] })
       .expect(201)
       .expect({
-        id: 'nanoId',
-        userId: 'orderTest',
-        totalAmount: 10000,
-        lines: [{ productId: 'orderTest', price: 10000, quantity: 1, id: 1 }],
+        data: {
+          id: 'nanoId',
+          userId: 'orderTest',
+          totalAmount: 10000,
+          lines: [{ productId: 'orderTest', price: 10000, quantity: 1, id: 1 }],
+        },
       });
   });
 });
