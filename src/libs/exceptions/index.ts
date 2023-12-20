@@ -28,6 +28,10 @@ export const notImplemented = (message?: string, option?: ErrorOption) => {
   return new NotImplementedException({ message, errorMessage: option?.errorMessage });
 };
 
+export const validationError = (message?: string, option?: ErrorOption) => {
+  return new ValidationErrorException({ message, errorMessage: option?.errorMessage });
+};
+
 export const internalServerError = (message?: string, option?: ErrorOption) => {
   return new InternalServerErrorException({ message, errorMessage: option?.errorMessage });
 };
@@ -37,6 +41,12 @@ export const optimisticLockVersionMismatch = (message?: string, option?: ErrorOp
 };
 
 export class OptimisticLockVersionMismatchException extends InternalServerErrorException {
+  constructor(args: { message?: string } & ErrorOption) {
+    super({ message: args.message, errorMessage: args.errorMessage });
+  }
+}
+
+export class ValidationErrorException extends InternalServerErrorException {
   constructor(args: { message?: string } & ErrorOption) {
     super({ message: args.message, errorMessage: args.errorMessage });
   }
