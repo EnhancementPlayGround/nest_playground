@@ -12,4 +12,12 @@ export class AccountDto {
   @IsNotEmpty({ message: '잔액이 필요합니다.' })
   @IsNumber({}, { message: '잔액은 숫자여야 합니다.' })
   balance!: number;
+
+  constructor(args: AccountDto) {
+    if (args) {
+      this.id = args.id;
+      this.userId = args.userId;
+      this.balance = args.balance;
+    }
+  }
 }

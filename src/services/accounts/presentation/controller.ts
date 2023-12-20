@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Patch, Query } from '@nestjs/common';
+import { validate } from 'class-validator';
 import { AccountService } from '../application';
 import { AccountListQueryDto, AccountDepositBodyDto, AccountDto } from '../dto';
+import { validationError } from '../../../libs/exceptions';
 
 @Controller('/accounts')
 export class AccountController {
@@ -17,6 +19,13 @@ export class AccountController {
   async deposit(@Body() body: AccountDepositBodyDto): Result<AccountDto> {
     const { userId, amount } = body;
     const account = await this.accountService.deposit({ userId, amount });
+    const data = new AccountDto(account);
+    const [error] = await validate(data);
+    if (error) {
+      throw validationError(`${error.property}: ${JSON.stringify(error.constraints)}`, {
+        errorMessage: `${error.property}: ${JSON.stringify(error.constraints)}`,
+      });
+    }
     return { data: account };
   }
 }

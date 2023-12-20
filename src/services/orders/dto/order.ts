@@ -34,4 +34,13 @@ export class OrderDto {
   @IsArray({ message: '구매 상품이 필요합니다.' })
   @ArrayMinSize(1, { message: '구매 상품이 필요합니다.' })
   lines!: LineDto[];
+
+  constructor(args: { id: string; userId: string; totalAmount: number; lines: LineDto[] }) {
+    if (args) {
+      this.id = args.id;
+      this.userId = args.userId;
+      this.totalAmount = args.totalAmount;
+      this.lines = args.lines;
+    }
+  }
 }
