@@ -9,6 +9,10 @@ export class ProductService extends ApplicationService {
     super();
   }
 
+  async list({ ids }: { ids?: string[] }) {
+    return this.productRepository.find({ conditions: { ids } });
+  }
+
   async retrieve({ id }: { id: string }) {
     return this.dataSource.transaction(async (transactionEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionEntityManager);
