@@ -38,29 +38,31 @@ describe('Product e2e', () => {
     await repository.getManager().query(`ALTER TABLE order_line AUTO_INCREMENT = 1;`);
   });
 
-  test('/orders (POST)', async () => {
-    await repository
-      .getManager()
-      .query(
-        `INSERT INTO account (createdAt,updatedAt,id,userId,balance) VALUE(NOW(),NOW(),'orderTest','orderTest',500000);`,
-      );
-    await repository
-      .getManager()
-      .query(
-        `INSERT INTO product (createdAt,updatedAt,id,name,price,stock) VALUE(NOW(),NOW(),'orderTest','productName',10000,500);`,
-      );
+  describe('/orders (POST)', () => {
+    test('단일 요청 테스트', async () => {
+      await repository
+        .getManager()
+        .query(
+          `INSERT INTO account (createdAt,updatedAt,id,userId,balance) VALUE(NOW(),NOW(),'orderTest','orderTest',500000);`,
+        );
+      await repository
+        .getManager()
+        .query(
+          `INSERT INTO product (createdAt,updatedAt,id,name,price,stock) VALUE(NOW(),NOW(),'orderTest','productName',10000,500);`,
+        );
 
-    return request(app.getHttpServer())
-      .post('/orders')
-      .send({ userId: 'orderTest', lines: [{ productId: 'orderTest', quantity: 1 }] })
-      .expect(201)
-      .expect({
-        data: {
-          id: 'nanoId',
-          userId: 'orderTest',
-          totalAmount: 10000,
-          lines: [{ productId: 'orderTest', price: 10000, quantity: 1, id: 1 }],
-        },
-      });
+      return request(app.getHttpServer())
+        .post('/orders')
+        .send({ userId: 'orderTest', lines: [{ productId: 'orderTest', quantity: 1 }] })
+        .expect(201)
+        .expect({
+          data: {
+            id: 'nanoId',
+            userId: 'orderTest',
+            totalAmount: 10000,
+            lines: [{ productId: 'orderTest', price: 10000, quantity: 1, id: 1 }],
+          },
+        });
+    });
   });
 });
