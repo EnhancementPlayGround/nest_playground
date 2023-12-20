@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { nanoid } from 'nanoid';
+import { Exclude } from 'class-transformer';
 import { Aggregate } from '../../../libs/ddd';
 import type { CalculateOrderService } from './services';
 import type { Product } from '../../products/domain/model';
@@ -59,6 +60,7 @@ export class Order extends Aggregate {
 @Entity()
 export class OrderLine {
   @PrimaryGeneratedColumn()
+  @Exclude()
   id!: string;
 
   @Column()

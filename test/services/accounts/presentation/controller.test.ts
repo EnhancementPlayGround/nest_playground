@@ -50,7 +50,7 @@ describe('AccountController', () => {
 
     test('query로 userId를 받아서 Account list를 반환한다.', async () => {
       const result = await accountController.list({ userId: 'test' });
-      expect(result).toEqual([{ id: 'test', userId: 'test', balance: 0 }]);
+      expect(result).toEqual({ data: [{ id: 'test', userId: 'test', balance: 0 }] });
     });
   });
 
@@ -72,7 +72,7 @@ describe('AccountController', () => {
 
     test('query로 userId를 받아서 Account list를 반환한다.', async () => {
       const result = await accountController.deposit({ userId: 'test', amount: 1000 });
-      expect(result).toEqual({ id: 'test', userId: 'test', balance: 1000 });
+      expect(result).toEqual({ data: { id: 'test', userId: 'test', balance: 1000 } });
     });
   });
 });
