@@ -11,8 +11,19 @@ export class OrderProductLogService extends ApplicationService {
     super();
   }
 
-  async getRanking(limit: number) {
-    return this.orderProductLogRepository.getRanking(limit);
+  async getRanking({
+    occurredAtStart,
+    occurredAtEnd,
+    limit,
+  }: {
+    occurredAtStart: Date;
+    occurredAtEnd: Date;
+    limit: number;
+  }) {
+    return this.orderProductLogRepository.getRanking({
+      conditions: { occurredAtStart, occurredAtEnd },
+      options: { limit },
+    });
   }
 
   @OnEvent('OrderCreatedEvent')

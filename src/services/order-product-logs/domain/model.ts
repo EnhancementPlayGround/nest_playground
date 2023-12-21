@@ -21,6 +21,9 @@ export class OrderProductLog extends Aggregate {
   @Column()
   price!: number;
 
+  @Column()
+  occurredAt!: Date;
+
   constructor(args: { orderId: string; userId: string; productId: string; quantity: number; price: number }) {
     super();
     if (args) {
@@ -29,6 +32,7 @@ export class OrderProductLog extends Aggregate {
       this.productId = args.productId;
       this.quantity = args.quantity;
       this.price = args.price;
+      this.occurredAt = new Date();
     }
   }
 }
