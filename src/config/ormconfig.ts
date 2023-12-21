@@ -36,7 +36,7 @@ export default {
     database: 'test',
     username: 'root',
     password: '1234',
-    synchronize: true,
+    synchronize: false,
     // migrations: ['src/migration/**/*.ts'],
     supportBigNumbers: true,
     entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}')],

@@ -25,19 +25,16 @@ describe('Product e2e', () => {
     repository = moduleFixture.get<ProductRepository>(ProductRepository);
   });
 
-  afterEach(async () => {
-    await repository.getManager().query(`DELETE FROM product WHERE id="productTest"`);
-  });
-
   test('/products/:id (GET)', async () => {
     await repository
       .getManager()
       .query(
         `INSERT INTO product (createdAt,updatedAt,id,name,price,stock) VALUE(NOW(),NOW(),'productTest','productName',10000,500)`,
       );
-    return request(app.getHttpServer())
+    request(app.getHttpServer())
       .get('/products/productTest')
       .expect(200)
       .expect({ data: { id: 'productTest', name: 'productName', price: 10000, stock: 500 } });
+    await repository.getManager().query(`DELETE FROM product WHERE id="productTest"`);
   });
 });

@@ -30,14 +30,6 @@ describe('Product e2e', () => {
     mockedNanoId.mockImplementation(() => 'nanoId');
   });
 
-  afterEach(async () => {
-    await repository.getManager().query(`DELETE FROM account WHERE id="orderTest";`);
-    await repository.getManager().query(`DELETE FROM order_line WHERE id=1;`);
-    await repository.getManager().query('DELETE FROM `order` WHERE id="orderTest";');
-    await repository.getManager().query(`DELETE FROM product WHERE id="orderTest";`);
-    await repository.getManager().query(`ALTER TABLE order_line AUTO_INCREMENT = 1;`);
-  });
-
   describe('/orders (POST)', () => {
     test('단일 요청 테스트', async () => {
       await repository
@@ -51,7 +43,7 @@ describe('Product e2e', () => {
           `INSERT INTO product (createdAt,updatedAt,id,name,price,stock) VALUE(NOW(),NOW(),'orderTest','productName',10000,500);`,
         );
 
-      return request(app.getHttpServer())
+      request(app.getHttpServer())
         .post('/orders')
         .send({ userId: 'orderTest', lines: [{ productId: 'orderTest', quantity: 1 }] })
         .expect(201)
@@ -63,6 +55,12 @@ describe('Product e2e', () => {
             lines: [{ productId: 'orderTest', price: 10000, quantity: 1, id: 1 }],
           },
         });
+
+      await repository.getManager().query(`DELETE FROM account WHERE id="orderTest";`);
+      await repository.getManager().query(`DELETE FROM order_line WHERE id=1;`);
+      await repository.getManager().query('DELETE FROM `order` WHERE id="orderTest";');
+      await repository.getManager().query(`DELETE FROM product WHERE id="orderTest";`);
+      await repository.getManager().query(`ALTER TABLE order_line AUTO_INCREMENT = 1;`);
     });
   });
 });
