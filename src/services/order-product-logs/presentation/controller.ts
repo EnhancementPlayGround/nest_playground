@@ -10,13 +10,19 @@ export class OrderProductLogController {
 
   @Get('/rankings')
   async getRanking(@Query() query: OrderProductLogGetRankingQueryDto) {
+    // Destructure
     const { occurredAtStart, occurredAtEnd, limit } = query;
+
+    // Call application service
     const rankings = await this.orderProductLogService.getRanking({
       occurredAtStart,
       occurredAtEnd,
       limit,
     });
     const products = await this.productService.list({ ids: rankings.map((ranking) => ranking.productId) });
+
+    // Validate output
+    // Return result
     const productsOf = keyBy(products, 'id');
 
     return {

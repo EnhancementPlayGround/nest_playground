@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ApplicationService } from '../../../libs/ddd';
 import { ProductRepository } from '../infrastructure/repository';
 import { injectTransactionalEntityManager } from '../../../libs/transactional';
+import { ProductDto } from '../dto';
 
 @Injectable()
 export class ProductService extends ApplicationService {
@@ -23,7 +24,7 @@ export class ProductService extends ApplicationService {
         conditions: { ids: [id] },
         options: { lock: { mode: 'pessimistic_read' } },
       });
-      return product;
+      return new ProductDto({ id: product.id, name: product.name, price: product.price, stock: product.stock });
     });
   }
 }

@@ -7,6 +7,7 @@ import { AccountRepository } from '../../accounts/infrastructure/repository';
 import { Order } from '../domain/model';
 import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { CalculateOrderService } from '../domain/services';
+import { OrderDto } from '../dto';
 
 @Injectable()
 export class OrderService extends ApplicationService {
@@ -64,7 +65,12 @@ export class OrderService extends ApplicationService {
         console.error(e);
       });
 
-      return order;
+      return new OrderDto({
+        id: order.id,
+        userId: order.userId,
+        lines: order.lines,
+        totalAmount: order.totalAmount,
+      });
     });
   }
 }

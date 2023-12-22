@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AccountRepository } from '../infrastructure/repository';
 import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { ApplicationService } from '../../../libs/ddd/service';
+import { AccountDto } from '../dto';
 
 @Injectable()
 export class AccountService extends ApplicationService {
@@ -10,14 +11,18 @@ export class AccountService extends ApplicationService {
   }
 
   async list(userId: string) {
-    return this.dataSource.transaction((transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionalEntityManager);
-      return injector(
+      const accounts = await injector(
         this.accountRepository,
         'find',
       )({
         conditions: { userId },
         options: { lock: { mode: 'pessimistic_read' } },
+      });
+
+      return accounts.map((account) => {
+        return new AccountDto({ id: account.id, userId: account.userId, balance: account.balance });
       });
     });
   }
@@ -34,7 +39,7 @@ export class AccountService extends ApplicationService {
       });
       account.deposit(args.amount);
       await injector(this.accountRepository, 'save')({ target: [account] });
-      return account;
+      return new AccountDto({ id: account.id, userId: account.userId, balance: account.balance });
     });
   }
 }

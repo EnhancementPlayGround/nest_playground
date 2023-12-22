@@ -10,35 +10,41 @@ export class AccountController {
 
   @Get('/')
   async list(@Query() query: AccountListQueryDto): Result<AccountDto[]> {
+    // Destructure
     const { userId } = query;
-    const accounts = await this.accountService.list(userId);
-    const data = await Promise.all(
-      accounts.map(async (account) => {
-        const dto = new AccountDto(account);
-        const [error] = await validate(dto);
-        if (error) {
-          throw validationError(`${error.property}: ${JSON.stringify(error.constraints)}`, {
-            errorMessage: `${error.property}: ${JSON.stringify(error.constraints)}`,
-          });
-        }
-        return dto;
-      }),
-    );
 
-    return { data };
-  }
+    // Call application service
+    const data = await this.accountService.list(userId);
 
-  @Patch('/')
-  async deposit(@Body() body: AccountDepositBodyDto): Result<AccountDto> {
-    const { userId, amount } = body;
-    const account = await this.accountService.deposit({ userId, amount });
-    const data = new AccountDto(account);
+    // Validate output
     const [error] = await validate(data);
     if (error) {
       throw validationError(`${error.property}: ${JSON.stringify(error.constraints)}`, {
         errorMessage: `${error.property}: ${JSON.stringify(error.constraints)}`,
       });
     }
+
+    // Return result
+    return { data };
+  }
+
+  @Patch('/')
+  async deposit(@Body() body: AccountDepositBodyDto): Result<AccountDto> {
+    // Destructure
+    const { userId, amount } = body;
+
+    // Call application service
+    const data = await this.accountService.deposit({ userId, amount });
+
+    // Validate output
+    const [error] = await validate(data);
+    if (error) {
+      throw validationError(`${error.property}: ${JSON.stringify(error.constraints)}`, {
+        errorMessage: `${error.property}: ${JSON.stringify(error.constraints)}`,
+      });
+    }
+
+    // Return result
     return { data };
   }
 }

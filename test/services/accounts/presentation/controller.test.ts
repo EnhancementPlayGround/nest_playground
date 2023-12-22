@@ -5,7 +5,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AccountController } from '../../../../src/services/accounts/presentation/controller';
 import { AccountService } from '../../../../src/services/accounts/application';
 import { AccountRepository } from '../../../../src/services/accounts/infrastructure/repository';
-import { Account } from '../../../../src/services/accounts/domain/model';
+import { AccountDto } from '../../../../src/services/accounts/dto';
 
 describe('AccountController', () => {
   let accountController: AccountController;
@@ -37,7 +37,7 @@ describe('AccountController', () => {
     let accountServiceListSpy: jest.SpyInstance;
     beforeEach(() => {
       accountServiceListSpy = jest.spyOn(accountService, 'list').mockResolvedValueOnce([
-        plainToClass(Account, {
+        plainToClass(AccountDto, {
           id: 'test',
           userId: 'test',
           balance: 0,
@@ -59,7 +59,7 @@ describe('AccountController', () => {
   describe('deposit test', () => {
     let accountServiceDepositSpy: jest.SpyInstance;
     beforeEach(() => {
-      const account = plainToClass(Account, {
+      const account = plainToClass(AccountDto, {
         id: 'test',
         userId: 'test',
         balance: 1000,
