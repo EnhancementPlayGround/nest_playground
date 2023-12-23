@@ -54,6 +54,8 @@ jobs:
         run: npm run test:docker:up
       - name: package install
         run: npm ci
+      - name: db migration
+        run: npm run migration:test
       - name: test
         run: |
           npm test
