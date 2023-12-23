@@ -38,4 +38,8 @@ export class AccountRepository extends Repository<Account> {
       ...convertOptions(args.options),
     });
   }
+
+  async truncate() {
+    await this.getManager().clear(Account);
+  }
 }

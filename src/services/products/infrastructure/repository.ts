@@ -23,4 +23,8 @@ export class ProductRepository extends VersionedRepository<Product> {
       ...convertOptions(args.options),
     });
   }
+
+  async truncate() {
+    await this.getManager().clear(Product);
+  }
 }

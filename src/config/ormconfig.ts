@@ -1,4 +1,5 @@
 import { join } from 'path';
+import { DataSource } from 'typeorm';
 import { DomainEvent } from '../libs/ddd/event';
 
 const mysqlConfig = {
@@ -11,7 +12,7 @@ const mysqlConfig = {
   timezone: 'UTC+0',
 };
 
-export default {
+export const ormconfig = {
   $filter: { $env: 'NODE_ENV' },
   production: {
     ...mysqlConfig,
@@ -24,7 +25,7 @@ export default {
   development: {
     ...mysqlConfig,
     synchronize: true,
-    // migrations: ['src/migration/**/*.ts'],
+    // migrations: ['dist/src/migrations/*.js'],
     supportBigNumbers: true,
     entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}'), DomainEvent],
     bigNumberStrings: false,
@@ -38,7 +39,7 @@ export default {
     username: 'root',
     password: '1234',
     synchronize: false,
-    // migrations: ['src/migration/**/*.ts'],
+    migrations: ['src/migrations/*{.ts,.js}'],
     supportBigNumbers: true,
     entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}')],
     bigNumberStrings: false,
@@ -46,9 +47,14 @@ export default {
   $default: {
     ...mysqlConfig,
     synchronize: false,
-    // migrations: ['src/migration/**/*.ts'],
+    migrations: ['dist/src/migrations/*.js'],
     supportBigNumbers: true,
     entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}'), DomainEvent],
     bigNumberStrings: false,
   },
 };
+
+// @ts-expect-error
+const dataSourceForMigration = new DataSource(ormconfig[process.env.NODE_ENV || '$default']);
+
+export default dataSourceForMigration;
