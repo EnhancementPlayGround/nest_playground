@@ -15,6 +15,7 @@ describe('User model test', () => {
       expect(user).toEqual({
         id: 'nanoId',
         name: 'test',
+        events: [],
       });
     });
   });

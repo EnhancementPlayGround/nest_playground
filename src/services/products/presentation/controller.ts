@@ -10,15 +10,21 @@ export class ProductController {
 
   @Get('/:id')
   async retrieve(@Param() params: ProductRetrieveParamDto): Result<ProductDto> {
+    // Destructure
     const { id } = params;
-    const product = await this.productService.retrieve({ id });
-    const data = new ProductDto(product);
+
+    // Call application service
+    const data = await this.productService.retrieve({ id });
+
+    // Validate output
     const [error] = await validate(data);
     if (error) {
       throw validationError(`${error.property}: ${JSON.stringify(error.constraints)}`, {
         errorMessage: `${error.property}: ${JSON.stringify(error.constraints)}`,
       });
     }
+
+    // Return result
     return {
       data,
     };

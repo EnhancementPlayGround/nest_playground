@@ -10,22 +10,41 @@ export class AccountController {
 
   @Get('/')
   async list(@Query() query: AccountListQueryDto): Result<AccountDto[]> {
+    // Destructure
     const { userId } = query;
-    const accounts = await this.accountService.list(userId);
-    return { data: accounts };
-  }
 
-  @Patch('/')
-  async deposit(@Body() body: AccountDepositBodyDto): Result<AccountDto> {
-    const { userId, amount } = body;
-    const account = await this.accountService.deposit({ userId, amount });
-    const data = new AccountDto(account);
+    // Call application service
+    const data = await this.accountService.list(userId);
+
+    // Validate output
     const [error] = await validate(data);
     if (error) {
       throw validationError(`${error.property}: ${JSON.stringify(error.constraints)}`, {
         errorMessage: `${error.property}: ${JSON.stringify(error.constraints)}`,
       });
     }
-    return { data: account };
+
+    // Return result
+    return { data };
+  }
+
+  @Patch('/')
+  async deposit(@Body() body: AccountDepositBodyDto): Result<AccountDto> {
+    // Destructure
+    const { userId, amount } = body;
+
+    // Call application service
+    const data = await this.accountService.deposit({ userId, amount });
+
+    // Validate output
+    const [error] = await validate(data);
+    if (error) {
+      throw validationError(`${error.property}: ${JSON.stringify(error.constraints)}`, {
+        errorMessage: `${error.property}: ${JSON.stringify(error.constraints)}`,
+      });
+    }
+
+    // Return result
+    return { data };
   }
 }

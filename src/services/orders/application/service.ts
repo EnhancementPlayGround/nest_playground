@@ -7,6 +7,7 @@ import { AccountRepository } from '../../accounts/infrastructure/repository';
 import { Order } from '../domain/model';
 import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { CalculateOrderService } from '../domain/services';
+import { OrderDto } from '../dto';
 
 @Injectable()
 export class OrderService extends ApplicationService {
@@ -39,7 +40,10 @@ export class OrderService extends ApplicationService {
         product.ordered({ quantity: orderLineOf[product.id].quantity });
       });
 
-      const account = await injector(this.accountRepository.findOneOrFail)({
+      const account = await injector(
+        this.accountRepository,
+        'findOneOrFail',
+      )({
         conditions: { userId: args.userId },
         options: { lock: { mode: 'pessimistic_write' } },
       });
@@ -48,11 +52,11 @@ export class OrderService extends ApplicationService {
       // -->
 
       // TODO: optimistic lock version mismatch error가 난다면 exponential backoff을 적용해야 한다. (with jitter)
-      await injector(this.productRepository.save)({ target: products });
+      await injector(this.productRepository, 'save')({ target: products });
 
       await Promise.all([
-        injector(this.orderRepository.save)({ target: [order] }),
-        injector(this.accountRepository.save)({ target: [account] }),
+        injector(this.orderRepository, 'save')({ target: [order] }),
+        injector(this.accountRepository, 'save')({ target: [account] }),
       ]);
 
       // NOTE: 로직과 상관없기때문에 await로 기다리지 않는다.
@@ -61,7 +65,12 @@ export class OrderService extends ApplicationService {
         console.error(e);
       });
 
-      return order;
+      return new OrderDto({
+        id: order.id,
+        userId: order.userId,
+        lines: order.lines,
+        totalAmount: order.totalAmount,
+      });
     });
   }
 }
