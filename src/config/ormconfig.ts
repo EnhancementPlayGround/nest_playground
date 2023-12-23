@@ -1,4 +1,5 @@
 import { join } from 'path';
+import { DomainEvent } from '../libs/ddd/event';
 
 const mysqlConfig = {
   type: 'mysql',
@@ -17,7 +18,7 @@ export default {
     synchronize: false,
     // migrations: ['src/migration/**/*.ts'],
     supportBigNumbers: true,
-    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}')],
+    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}'), DomainEvent],
     bigNumberStrings: false,
   },
   development: {
@@ -25,7 +26,7 @@ export default {
     synchronize: true,
     // migrations: ['src/migration/**/*.ts'],
     supportBigNumbers: true,
-    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}')],
+    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}'), DomainEvent],
     bigNumberStrings: false,
     logging: true,
   },
@@ -47,7 +48,7 @@ export default {
     synchronize: false,
     // migrations: ['src/migration/**/*.ts'],
     supportBigNumbers: true,
-    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}')],
+    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}'), DomainEvent],
     bigNumberStrings: false,
   },
 };

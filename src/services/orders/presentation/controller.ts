@@ -11,15 +11,21 @@ export class OrderController {
   @Post('/')
   @HttpCode(201)
   async order(@Body() body: OrderBodyDto): Result<OrderDto> {
+    // Destructure
     const { userId, lines } = body;
-    const order = await this.orderService.order({ userId, lines });
-    const data = new OrderDto(order);
+
+    // Call application service
+    const data = await this.orderService.order({ userId, lines });
+
+    // Validate output
     const [error] = await validate(data);
     if (error) {
       throw validationError(`${error.property}: ${JSON.stringify(error.constraints)}`, {
         errorMessage: `${error.property}: ${JSON.stringify(error.constraints)}`,
       });
     }
+
+    // Return result
     return { data };
   }
 }

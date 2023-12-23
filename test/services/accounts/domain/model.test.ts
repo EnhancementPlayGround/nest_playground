@@ -18,6 +18,7 @@ describe('Account model test', () => {
         id: 'nanoId',
         userId: 'testUserId',
         balance: 0,
+        events: [],
       });
     });
   });

@@ -6,6 +6,6 @@ import { ProductRepository } from './infrastructure/repository';
 @Module({
   controllers: [ProductController],
   providers: [ProductService, ProductRepository],
-  exports: [ProductRepository],
+  exports: [ProductRepository, ProductService],
 })
 export class ProductModule {}

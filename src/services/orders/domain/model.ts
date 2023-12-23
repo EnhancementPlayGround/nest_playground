@@ -4,6 +4,7 @@ import { Exclude } from 'class-transformer';
 import { Aggregate } from '../../../libs/ddd';
 import type { CalculateOrderService } from './services';
 import type { Product } from '../../products/domain/model';
+import { OrderCreatedEvent } from './events';
 
 type CtorType = {
   userId: string;
@@ -37,6 +38,8 @@ export class Order extends Aggregate {
       this.totalAmount = args.totalAmount;
       this.lines = args.lines.map((line) => new OrderLine(line));
     }
+
+    this.publishEvent(new OrderCreatedEvent(this.id, this.userId, this.totalAmount, this.lines));
   }
 
   static from(args: {

@@ -1,10 +1,11 @@
 import { Test } from '@nestjs/testing';
 import { DataSource, EntityManager } from 'typeorm';
 import { plainToClass } from 'class-transformer';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProductController } from '../../../../src/services/products/presentation/controller';
 import { ProductService } from '../../../../src/services/products/application';
 import { ProductRepository } from '../../../../src/services/products/infrastructure/repository';
-import { Product } from '../../../../src/services/products/domain/model';
+import { ProductDto } from '../../../../src/services/products/dto';
 
 describe('ProductController', () => {
   let productController: ProductController;
@@ -24,6 +25,7 @@ describe('ProductController', () => {
           },
         },
         EntityManager,
+        EventEmitter2,
       ],
     }).compile();
 
@@ -35,7 +37,7 @@ describe('ProductController', () => {
     let productServiceRetrieveSpy: jest.SpyInstance;
     beforeEach(() => {
       productServiceRetrieveSpy = jest.spyOn(productService, 'retrieve').mockResolvedValueOnce(
-        plainToClass(Product, {
+        plainToClass(ProductDto, {
           id: 'test',
           name: 'productName',
           price: 10000,
