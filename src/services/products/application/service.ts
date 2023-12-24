@@ -11,7 +11,11 @@ export class ProductService extends ApplicationService {
   }
 
   async list({ ids }: { ids?: string[] }) {
-    return this.productRepository.find({ conditions: { ids } });
+    const products = await this.productRepository.find({ conditions: { ids } });
+
+    return products.map(
+      (product) => new ProductDto({ id: product.id, name: product.name, price: product.price, stock: product.stock }),
+    );
   }
 
   async retrieve({ id }: { id: string }) {

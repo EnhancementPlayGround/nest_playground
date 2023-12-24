@@ -51,11 +51,17 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
+      - name: Test db container up
+        run: npm run test:docker:up
       - name: package install
         run: npm ci
+      - name: db migration
+        run: npm run migration:test
       - name: test
         run: |
           npm test
+      - name: Test db container down
+        run: npm run test:docker:down
   build:
     runs-on: ubuntu-latest
     strategy:

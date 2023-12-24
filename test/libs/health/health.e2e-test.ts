@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HealthModule } from '../../../src/libs/health/module';
 
-describe('AppController (e2e)', () => {
+describe('Health e2e', () => {
   let app: INestApplication;
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({

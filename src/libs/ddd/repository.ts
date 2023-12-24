@@ -11,7 +11,7 @@ export abstract class Repository<T extends Aggregate> {
 
   constructor(private entityManager: EntityManager, private eventEmitter: EventEmitter) {}
 
-  protected getManager(): EntityManager {
+  getManager(): EntityManager {
     return this.entityManager;
   }
 

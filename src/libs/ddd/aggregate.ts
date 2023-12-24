@@ -2,7 +2,7 @@ import { Exclude } from 'class-transformer';
 import { CreateDateColumn, UpdateDateColumn, VersionColumn } from 'typeorm';
 import { DomainEvent } from './event';
 
-export class Aggregate {
+export abstract class Aggregate {
   @CreateDateColumn()
   @Exclude()
   private createdAt!: Date;

@@ -1,5 +1,5 @@
 import { Store } from 'confidence';
-import ormconfig from './ormconfig';
+import { ormconfig } from './ormconfig';
 
 const config = {
   server: {

@@ -12,9 +12,9 @@ export class ProductRepository extends VersionedRepository<Product> {
   async find(args: {
     conditions: { ids?: string[] };
     options?: FindOptions;
-    transactionEntityManager?: EntityManager;
+    transactionalEntityManager?: EntityManager;
   }) {
-    return (args.transactionEntityManager ?? this.getManager()).find(this.entityClass, {
+    return (args.transactionalEntityManager ?? this.getManager()).find(Product, {
       where: {
         ...stripUndefined({
           id: InValues(args.conditions.ids),
@@ -22,5 +22,9 @@ export class ProductRepository extends VersionedRepository<Product> {
       },
       ...convertOptions(args.options),
     });
+  }
+
+  async truncate() {
+    await this.getManager().clear(Product);
   }
 }
