@@ -3,6 +3,9 @@ import { nanoid } from 'nanoid';
 import { Aggregate } from '../../../libs/ddd';
 import { badRequest } from '../../../libs/exceptions';
 
+const transactionType = ['order'] as const;
+export type TransactionType = (typeof transactionType)[number];
+
 @Entity()
 @Index('Idx_userId', ['userId'])
 export class Account extends Aggregate {
@@ -28,7 +31,7 @@ export class Account extends Aggregate {
     this.balance += amount;
   }
 
-  withdraw(amount: number) {
+  withdraw({ amount }: { amount: number }) {
     if (this.balance < amount) {
       throw badRequest('Can not withdraw more than balance.', {
         errorMessage: '잔액보다 많은 금액을 출금할 수 없습니다.',

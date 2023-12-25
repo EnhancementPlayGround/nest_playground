@@ -4,7 +4,7 @@ import { Exclude } from 'class-transformer';
 import { Aggregate } from '../../../libs/ddd';
 import type { CalculateOrderService } from './services';
 import type { Product } from '../../products/domain/model';
-import { OrderCreatedEvent } from './events';
+import { OrderCreatedEvent, OrderPaidEvent } from './events';
 
 type CtorType = {
   userId: string;
@@ -38,8 +38,6 @@ export class Order extends Aggregate {
       this.totalAmount = args.totalAmount;
       this.lines = args.lines.map((line) => new OrderLine(line));
     }
-
-    this.publishEvent(new OrderCreatedEvent(this.id, this.userId, this.totalAmount, this.lines));
   }
 
   static from(args: {
@@ -57,6 +55,11 @@ export class Order extends Aggregate {
       lines,
       totalAmount,
     });
+  }
+
+  // NOTE: 현재는 status가 필요없기 때문에 이렇게 구현했지만 실제로는 status가 필요할 것이다.
+  paid() {
+    this.publishEvent(new OrderPaidEvent(this.id));
   }
 }
 

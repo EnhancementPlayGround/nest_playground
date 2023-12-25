@@ -6,7 +6,7 @@ import { ProductRepository } from '../infrastructure/repository';
 import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { ProductDto } from '../dto';
 import { OrderCreatedEvent } from '../../orders/domain/events';
-import { ProductOrderedEvent } from '../domain/events';
+import { ProductOrderFailedEvent, ProductOrderedEvent } from '../domain/events';
 
 @Injectable()
 export class ProductService extends ApplicationService {
@@ -23,7 +23,7 @@ export class ProductService extends ApplicationService {
   }
 
   async retrieve({ id }: { id: string }) {
-    return this.dataSource.transaction(async (transactionEntityManager) => {
+    return this.dataSource.createEntityManager().transaction(async (transactionEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionEntityManager);
       const [product] = await injector(
         this.productRepository,
@@ -40,27 +40,31 @@ export class ProductService extends ApplicationService {
   async onOrderCreatedEvent(event: OrderCreatedEvent) {
     const { orderId, userId, lines, totalAmount } = event;
 
-    await this.dataSource.transaction(async (transactionalEntityManager) => {
-      const injector = injectTransactionalEntityManager(transactionalEntityManager);
-      const products = await injector(
-        this.productRepository,
-        'find',
-      )({
-        conditions: { ids: lines.map((line) => line.productId) },
-        options: { lock: { mode: 'pessimistic_write' } },
-      });
-      const lineOf = keyBy(lines, 'productId');
-      products.forEach((product) => {
-        const line = lineOf[product.id];
-        product.ordered({ quantity: line.quantity });
-      });
+    try {
+      await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
+        const injector = injectTransactionalEntityManager(transactionalEntityManager);
+        const products = await injector(
+          this.productRepository,
+          'find',
+        )({
+          conditions: { ids: lines.map((line) => line.productId) },
+          options: { lock: { mode: 'pessimistic_write' } },
+        });
+        const lineOf = keyBy(lines, 'productId');
+        products.forEach((product) => {
+          const line = lineOf[product.id];
+          product.ordered({ quantity: line.quantity });
+        });
 
-      await injector(this.productRepository, 'save')({ target: products });
+        await injector(this.productRepository, 'save')({ target: products });
+      });
       // NOTE: 여기서 하는게 맞을까..?
-      await injector(
-        this.productRepository,
-        'saveEvent',
-      )({ events: [new ProductOrderedEvent(orderId, userId, totalAmount, lines)] });
-    });
+      await this.productRepository.saveEvent({
+        events: [new ProductOrderedEvent(orderId, userId, totalAmount, lines)],
+      });
+    } catch (err) {
+      await this.productRepository.saveEvent({ events: [new ProductOrderFailedEvent(orderId)] });
+      throw err; // TODO: 로깅
+    }
   }
 }
