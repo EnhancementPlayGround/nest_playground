@@ -55,6 +55,6 @@ export const ormconfig = {
 };
 
 // @ts-expect-error
-const dataSourceForMigration = new DataSource(ormconfig[process.env.NODE_ENV || '$default']);
+const dataSourceForMigration = new DataSource(ormconfig[process.env.NODE_ENV ?? '$default']);
 
 export default dataSourceForMigration;

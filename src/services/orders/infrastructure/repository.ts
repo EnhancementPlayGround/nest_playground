@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import type { EntityManager } from 'typeorm';
 import { Repository } from '../../../libs/ddd';
-import { Order, OrderLine } from '../domain/model';
+import { Order } from '../domain/model';
 import { internalServerError } from '../../../libs/exceptions';
 import { convertOptions, InValues, type FindOptions } from '../../../libs/orm';
 import { stripUndefined } from '../../../libs/common';

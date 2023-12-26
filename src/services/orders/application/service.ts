@@ -72,17 +72,17 @@ export class OrderService extends ApplicationService {
   @OnEvent('ProductOrderFailedEvent')
   @OnEvent('TransactionFailedEvent')
   async onFailedEvent(event: ProductOrderFailedEvent | TransactionFailedEvent) {
-    let orderId;
+    let orderId: string;
     if (event instanceof ProductOrderFailedEvent) {
       orderId = event.orderId;
     }
     if (event instanceof TransactionFailedEvent) {
-      orderId = event.transactionDetail.orderId;
+      orderId = event.transactionDetail.orderId!;
     }
 
     await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionalEntityManager);
-      const [order] = await injector(this.orderRepository, 'find')({ conditions: { ids: [orderId!] } });
+      const [order] = await injector(this.orderRepository, 'find')({ conditions: { ids: [orderId] } });
 
       await injector(this.orderRepository, 'softDelete')({ target: [order] });
     });
