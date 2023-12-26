@@ -6,6 +6,7 @@ import { ProductController } from '../../../../src/services/products/presentatio
 import { ProductService } from '../../../../src/services/products/application';
 import { ProductRepository } from '../../../../src/services/products/infrastructure/repository';
 import { ProductDto } from '../../../../src/services/products/dto';
+import { OrderRepository } from '../../../../src/services/orders/infrastructure/repository';
 
 describe('ProductController', () => {
   let productController: ProductController;
@@ -26,6 +27,7 @@ describe('ProductController', () => {
         },
         EntityManager,
         EventEmitter2,
+        OrderRepository,
       ],
     }).compile();
 

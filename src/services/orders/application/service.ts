@@ -9,6 +9,8 @@ import { CalculateOrderService } from '../domain/services';
 import { OrderDto } from '../dto';
 import { TransactionOccurredEvent } from '../../accounts/domain/events';
 import { OrderCreatedEvent } from '../domain/events';
+import { ProductOrderFailedEvent } from '../../products/domain/events';
+import { TransactionFailedEvent } from '../../accounts/domain/events/transaction-failed-event';
 
 @Injectable()
 export class OrderService extends ApplicationService {
@@ -65,5 +67,24 @@ export class OrderService extends ApplicationService {
         await injector(this.orderRepository, 'save')({ target: [order] });
       });
     }
+  }
+
+  @OnEvent('ProductOrderFailedEvent')
+  @OnEvent('TransactionFailedEvent')
+  async onFailedEvent(event: ProductOrderFailedEvent | TransactionFailedEvent) {
+    let orderId;
+    if (event instanceof ProductOrderFailedEvent) {
+      orderId = event.orderId;
+    }
+    if (event instanceof TransactionFailedEvent) {
+      orderId = event.transactionDetail.orderId;
+    }
+
+    await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
+      const injector = injectTransactionalEntityManager(transactionalEntityManager);
+      const [order] = await injector(this.orderRepository, 'find')({ conditions: { ids: [orderId!] } });
+
+      await injector(this.orderRepository, 'softDelete')({ target: [order] });
+    });
   }
 }

@@ -23,4 +23,13 @@ export class Product extends VersionedAggregate {
       });
     this.stock -= quantity;
   }
+
+  cancel({ quantity }: { quantity: number }) {
+    if (quantity <= 0) {
+      throw badRequest(`Can not cancel(quantity:${quantity}) this product(${this.id}) less than 0`, {
+        errorMessage: '취소할 수 없습니다.',
+      });
+    }
+    this.stock += quantity;
+  }
 }

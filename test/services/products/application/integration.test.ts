@@ -1,12 +1,14 @@
 import { Test } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { forwardRef } from '@nestjs/common';
 import { getConfig } from '../../../../src/config';
 import { ProductService } from '../../../../src/services/products/application';
 import { ProductRepository } from '../../../../src/services/products/infrastructure/repository';
 import { Product } from '../../../../src/services/products/domain/model';
+import { OrderModule } from '../../../../src/services/orders/module';
 
 describe('Product Service integration test', () => {
   let productService: ProductService;
@@ -15,8 +17,12 @@ describe('Product Service integration test', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      imports: [TypeOrmModule.forRoot(getConfig('/ormconfig'))],
-      providers: [ProductService, ProductRepository, EventEmitter2],
+      imports: [
+        TypeOrmModule.forRoot(getConfig('/ormconfig')),
+        forwardRef(() => OrderModule),
+        EventEmitterModule.forRoot(),
+      ],
+      providers: [ProductService, ProductRepository],
     }).compile();
 
     productService = module.get<ProductService>(ProductService);

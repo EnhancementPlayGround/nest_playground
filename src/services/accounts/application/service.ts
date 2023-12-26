@@ -5,7 +5,7 @@ import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { ApplicationService } from '../../../libs/ddd/service';
 import { AccountDto } from '../dto';
 import { ProductOrderedEvent } from '../../products/domain/events';
-import { TransactionOccurredEvent } from '../domain/events';
+import { TransactionOccurredEvent, TransactionFailedEvent } from '../domain/events';
 
 @Injectable()
 export class AccountService extends ApplicationService {
@@ -49,16 +49,24 @@ export class AccountService extends ApplicationService {
   @OnEvent('ProductOrderedEvent')
   async onProductOrderedEvent(event: ProductOrderedEvent) {
     const { userId, orderId, totalAmount } = event;
-
-    const account = await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
-      const injector = injectTransactionalEntityManager(transactionalEntityManager);
-      const account = await injector(this.accountRepository, 'findOneOrFail')({ conditions: { userId } });
-      account.withdraw({ amount: totalAmount });
-      await injector(this.accountRepository, 'save')({ target: [account] });
-      return account;
-    });
-    await this.accountRepository.saveEvent({
-      events: [new TransactionOccurredEvent(account.id, totalAmount, 'order', { orderId })],
-    });
+    try {
+      await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
+        const injector = injectTransactionalEntityManager(transactionalEntityManager);
+        const account = await injector(
+          this.accountRepository,
+          'findOneOrFail',
+        )({ conditions: { userId }, options: { lock: { mode: 'pessimistic_write' } } });
+        account.withdraw({ amount: totalAmount });
+        await injector(this.accountRepository, 'save')({ target: [account] });
+        await this.accountRepository.saveEvent({
+          events: [new TransactionOccurredEvent(account.id, totalAmount, 'order', { orderId })],
+        });
+      });
+    } catch (err) {
+      await this.accountRepository.saveEvent({
+        events: [new TransactionFailedEvent(userId, totalAmount, 'order', { orderId })],
+      });
+      throw err; // TODO: 로깅
+    }
   }
 }

@@ -1,10 +1,10 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { nanoid } from 'nanoid';
 import { Exclude } from 'class-transformer';
 import { Aggregate } from '../../../libs/ddd';
 import type { CalculateOrderService } from './services';
 import type { Product } from '../../products/domain/model';
-import { OrderCreatedEvent, OrderPaidEvent } from './events';
+import { OrderPaidEvent } from './events';
 
 type CtorType = {
   userId: string;
@@ -29,6 +29,10 @@ export class Order extends Aggregate {
 
   @OneToMany(() => OrderLine, (orderLine) => orderLine.order, { cascade: true, eager: true })
   lines!: OrderLine[];
+
+  @DeleteDateColumn({ nullable: true })
+  @Exclude()
+  deletedAt!: Date;
 
   constructor(args: CtorType) {
     super();
@@ -77,6 +81,10 @@ export class OrderLine {
 
   @Column()
   quantity!: number;
+
+  @DeleteDateColumn({ nullable: true })
+  @Exclude()
+  deletedAt!: Date;
 
   @ManyToOne(() => Order, (order) => order.lines)
   order!: never;

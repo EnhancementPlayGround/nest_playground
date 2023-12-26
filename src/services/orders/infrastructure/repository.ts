@@ -32,4 +32,8 @@ export class OrderRepository extends Repository<Order> {
       ...convertOptions(args.options),
     });
   }
+
+  async softDelete(args: { target: Order[]; transactionalEntityManager?: EntityManager }) {
+    return (args.transactionalEntityManager ?? this.getManager()).softRemove(args.target);
+  }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 as EventEmitter, OnEvent } from '@nestjs/event-emitter';
+import { OnEvent } from '@nestjs/event-emitter';
 import { keyBy } from 'lodash';
 import { ApplicationService } from '../../../libs/ddd';
 import { ProductRepository } from '../infrastructure/repository';
@@ -7,10 +7,12 @@ import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { ProductDto } from '../dto';
 import { OrderCreatedEvent } from '../../orders/domain/events';
 import { ProductOrderFailedEvent, ProductOrderedEvent } from '../domain/events';
+import { TransactionFailedEvent } from '../../accounts/domain/events/transaction-failed-event';
+import { OrderRepository } from '../../orders/infrastructure/repository';
 
 @Injectable()
 export class ProductService extends ApplicationService {
-  constructor(private productRepository: ProductRepository, private eventEmitter: EventEmitter) {
+  constructor(private productRepository: ProductRepository, private orderRepository: OrderRepository) {
     super();
   }
 
@@ -65,6 +67,34 @@ export class ProductService extends ApplicationService {
     } catch (err) {
       await this.productRepository.saveEvent({ events: [new ProductOrderFailedEvent(orderId)] });
       throw err; // TODO: 로깅
+    }
+  }
+
+  @OnEvent('TransactionFailedEvent')
+  async onTransactionFailedEvent(event: TransactionFailedEvent) {
+    const { transactionDetail, transactionType } = event;
+    if (transactionType === 'order') {
+      const { orderId } = transactionDetail;
+
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
+        const injector = injectTransactionalEntityManager(transactionalEntityManager);
+
+        const [order] = await injector(this.orderRepository, 'find')({ conditions: { ids: [orderId!] } });
+        const products = await injector(
+          this.productRepository,
+          'find',
+        )({
+          conditions: { ids: order.lines.map((line) => line.productId) },
+          options: { lock: { mode: 'pessimistic_write' } },
+        });
+
+        const lineOf = keyBy(order.lines, 'productId');
+        products.forEach((product) => {
+          product.cancel({ quantity: lineOf[product.id].quantity });
+        });
+
+        await injector(this.productRepository, 'save')({ target: products });
+      });
     }
   }
 }
