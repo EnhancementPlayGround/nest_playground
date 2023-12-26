@@ -35,41 +35,42 @@ describe('Product Service integration test', () => {
   });
 
   describe('list test', () => {
+    const testProducts = [
+      plainToClass(Product, {
+        id: 'productTest1',
+        name: 'productTest1',
+        price: 1000,
+        stock: 100,
+      }),
+      plainToClass(Product, {
+        id: 'productTest2',
+        name: 'productTest2',
+        price: 500,
+        stock: 100,
+      }),
+    ];
     beforeAll(async () => {
       await productRepository.save({
-        target: [
-          plainToClass(Product, {
-            id: 'test1',
-            name: 'product1',
-            price: 1000,
-            stock: 100,
-          }),
-          plainToClass(Product, {
-            id: 'test2',
-            name: 'product2',
-            price: 500,
-            stock: 100,
-          }),
-        ],
+        target: testProducts,
       });
     });
 
     afterAll(async () => {
-      await productRepository.truncate();
+      await productRepository.remove({ target: testProducts });
     });
 
     test('어카운트 list를 조회한다.', async () => {
-      const result = await productService.list({ ids: ['test1', 'test2'] });
+      const result = await productService.list({ ids: ['productTest1', 'productTest2'] });
       expect(result).toEqual([
         {
-          id: 'test1',
-          name: 'product1',
+          id: 'productTest1',
+          name: 'productTest1',
           price: 1000,
           stock: 100,
         },
         {
-          id: 'test2',
-          name: 'product2',
+          id: 'productTest2',
+          name: 'productTest2',
           price: 500,
           stock: 100,
         },

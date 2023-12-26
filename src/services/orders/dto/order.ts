@@ -14,6 +14,14 @@ class LineDto {
   @IsNumber({}, { message: '구매 수량은 숫자여야 합니다.' })
   @Min(1, { message: '구매 수량은 최소 1개여야 합니다.' })
   quantity!: number;
+
+  constructor(args: { productId: string; price: number; quantity: number }) {
+    if (args) {
+      this.productId = args.productId;
+      this.price = args.price;
+      this.quantity = args.quantity;
+    }
+  }
 }
 
 export class OrderDto {
@@ -40,7 +48,7 @@ export class OrderDto {
       this.id = args.id;
       this.userId = args.userId;
       this.totalAmount = args.totalAmount;
-      this.lines = args.lines;
+      this.lines = args.lines.map((line) => new LineDto(line));
     }
   }
 }
