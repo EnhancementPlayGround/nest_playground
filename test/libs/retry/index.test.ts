@@ -22,7 +22,7 @@ describe('retry test', () => {
             },
           },
         });
-      } catch (err) {
+      } catch {
         expect(count).toBe(5);
       }
     },
