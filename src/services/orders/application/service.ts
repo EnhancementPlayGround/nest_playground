@@ -1,27 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { keyBy } from 'lodash';
+import { OnEvent } from '@nestjs/event-emitter';
 import { ApplicationService } from '../../../libs/ddd';
 import { OrderRepository } from '../infrastructure/repository';
 import { ProductRepository } from '../../products/infrastructure/repository';
-import { AccountRepository } from '../../accounts/infrastructure/repository';
 import { Order } from '../domain/model';
 import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { CalculateOrderService } from '../domain/services';
 import { OrderDto } from '../dto';
+import { TransactionOccurredEvent } from '../../accounts/domain/events';
+import { OrderCreatedEvent } from '../domain/events';
+import { ProductOrderFailedEvent } from '../../products/domain/events';
+import { TransactionFailedEvent } from '../../accounts/domain/events/transaction-failed-event';
 
 @Injectable()
 export class OrderService extends ApplicationService {
   constructor(
     private orderRepository: OrderRepository,
     private productRepository: ProductRepository,
-    private accountRepository: AccountRepository,
     private calculateOrderService: CalculateOrderService,
   ) {
     super();
   }
 
   async order(args: { userId: string; lines: { productId: string; quantity: number }[] }) {
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
+    const order = await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionalEntityManager);
       const products = await this.productRepository.find({
         conditions: { ids: args.lines.map((line) => line.productId) },
@@ -34,36 +36,7 @@ export class OrderService extends ApplicationService {
         products,
       });
 
-      // <!-- 여기에 있는게 맞을까?
-      const orderLineOf = keyBy(order.lines, 'productId');
-      products.forEach((product) => {
-        product.ordered({ quantity: orderLineOf[product.id].quantity });
-      });
-
-      const account = await injector(
-        this.accountRepository,
-        'findOneOrFail',
-      )({
-        conditions: { userId: args.userId },
-        options: { lock: { mode: 'pessimistic_write' } },
-      });
-
-      account.withdraw(order.totalAmount);
-      // -->
-
-      // TODO: optimistic lock version mismatch error가 난다면 exponential backoff을 적용해야 한다. (with jitter)
-      await injector(this.productRepository, 'save')({ target: products });
-
-      await Promise.all([
-        injector(this.orderRepository, 'save')({ target: [order] }),
-        injector(this.accountRepository, 'save')({ target: [account] }),
-      ]);
-
-      // NOTE: 로직과 상관없기때문에 await로 기다리지 않는다.
-      this.orderRepository.sendToDataPlatform({ order }).catch((e) => {
-        // 데이터 플랫폼에 보내는건 실패해도 문제가 없어야 하기 때문에 로깅만 한다.
-        console.error(e);
-      });
+      await injector(this.orderRepository, 'save')({ target: [order] });
 
       return new OrderDto({
         id: order.id,
@@ -71,6 +44,47 @@ export class OrderService extends ApplicationService {
         lines: order.lines,
         totalAmount: order.totalAmount,
       });
+    });
+    await this.orderRepository.saveEvent({
+      events: [new OrderCreatedEvent(order.id, order.userId, order.totalAmount, order.lines)],
+    });
+    return order;
+  }
+
+  @OnEvent('TransactionOccurredEvent')
+  async onProductOrderedEvent(event: TransactionOccurredEvent) {
+    const { transactionDetail } = event;
+
+    if (event.isOrderSucceed()) {
+      await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
+        const injector = injectTransactionalEntityManager(transactionalEntityManager);
+        const [order] = await injector(
+          this.orderRepository,
+          'find',
+        )({ conditions: { ids: [transactionDetail.orderId!] } });
+
+        order.paid();
+        await injector(this.orderRepository, 'save')({ target: [order] });
+      });
+    }
+  }
+
+  @OnEvent('ProductOrderFailedEvent')
+  @OnEvent('TransactionFailedEvent')
+  async onFailedEvent(event: ProductOrderFailedEvent | TransactionFailedEvent) {
+    let orderId: string;
+    if (event instanceof ProductOrderFailedEvent) {
+      orderId = event.orderId;
+    }
+    if (event instanceof TransactionFailedEvent) {
+      orderId = event.transactionDetail.orderId!;
+    }
+
+    await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
+      const injector = injectTransactionalEntityManager(transactionalEntityManager);
+      const [order] = await injector(this.orderRepository, 'find')({ conditions: { ids: [orderId] } });
+
+      await injector(this.orderRepository, 'softDelete')({ target: [order] });
     });
   }
 }

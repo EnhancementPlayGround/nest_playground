@@ -22,7 +22,8 @@
     "test:e2e": "NODE_ENV=test jest --config ./test/jest-e2e.json",
     "test:docker:up": "docker-compose -f docker-compose.test.yml up -d",
     "test:docker:down": "docker-compose -f docker-compose.test.yml  down",
-    "migration:test": "NODE_ENV=test typeorm-ts-node-commonjs migration:run -d ./src/config/ormconfig"
+    "migration:test": "NODE_ENV=test typeorm-ts-node-commonjs migration:run -d ./src/config/ormconfig",
+    "migration:create": "typeorm migration:create ./src/migrations/time"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.1",

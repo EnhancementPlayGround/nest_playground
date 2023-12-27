@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ApplicationService } from '../../../libs/ddd';
 import { OrderProductLogRepository } from '../infrastructure/repository';
-import { OrderCreatedEvent } from '../../orders/domain/events';
 import { OrderProductLog } from '../domain/model';
+import { OrderPaidEvent } from '../../orders/domain/events/order-paid-event';
+import { OrderRepository } from '../../orders/infrastructure/repository';
 
 @Injectable()
 export class OrderProductLogService extends ApplicationService {
-  constructor(private orderProductLogRepository: OrderProductLogRepository) {
+  constructor(private orderProductLogRepository: OrderProductLogRepository, private orderRepository: OrderRepository) {
     super();
   }
 
@@ -26,13 +27,21 @@ export class OrderProductLogService extends ApplicationService {
     });
   }
 
-  @OnEvent('OrderCreatedEvent')
-  async onOrderCreatedEvent(event: OrderCreatedEvent) {
-    const { orderId, userId, lines } = event;
+  @OnEvent('OrderPaidEvent')
+  async onOrderPaidEventEvent(event: OrderPaidEvent) {
+    const { orderId } = event;
 
-    const orderProductLogs = lines.map(
+    const [order] = await this.orderRepository.find({ conditions: { ids: [orderId] } });
+
+    const orderProductLogs = order.lines.map(
       (line) =>
-        new OrderProductLog({ orderId, userId, price: line.price, productId: line.productId, quantity: line.quantity }),
+        new OrderProductLog({
+          orderId: order.id,
+          userId: order.userId,
+          price: line.price,
+          productId: line.productId,
+          quantity: line.quantity,
+        }),
     );
 
     await this.orderProductLogRepository.save({ target: orderProductLogs });

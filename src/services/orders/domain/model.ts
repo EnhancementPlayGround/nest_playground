@@ -1,10 +1,10 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { nanoid } from 'nanoid';
 import { Exclude } from 'class-transformer';
 import { Aggregate } from '../../../libs/ddd';
 import type { CalculateOrderService } from './services';
 import type { Product } from '../../products/domain/model';
-import { OrderCreatedEvent } from './events';
+import { OrderPaidEvent } from './events';
 
 type CtorType = {
   userId: string;
@@ -30,6 +30,10 @@ export class Order extends Aggregate {
   @OneToMany(() => OrderLine, (orderLine) => orderLine.order, { cascade: true, eager: true })
   lines!: OrderLine[];
 
+  @DeleteDateColumn({ nullable: true })
+  @Exclude()
+  deletedAt!: Date;
+
   constructor(args: CtorType) {
     super();
     if (args) {
@@ -38,8 +42,6 @@ export class Order extends Aggregate {
       this.totalAmount = args.totalAmount;
       this.lines = args.lines.map((line) => new OrderLine(line));
     }
-
-    this.publishEvent(new OrderCreatedEvent(this.id, this.userId, this.totalAmount, this.lines));
   }
 
   static from(args: {
@@ -58,6 +60,11 @@ export class Order extends Aggregate {
       totalAmount,
     });
   }
+
+  // NOTE: 현재는 status가 필요없기 때문에 이렇게 구현했지만 실제로는 status가 필요할 것이다.
+  paid() {
+    this.publishEvent(new OrderPaidEvent(this.id));
+  }
 }
 
 @Entity()
@@ -74,6 +81,10 @@ export class OrderLine {
 
   @Column()
   quantity!: number;
+
+  @DeleteDateColumn({ nullable: true })
+  @Exclude()
+  deletedAt!: Date;
 
   @ManyToOne(() => Order, (order) => order.lines)
   order!: never;
