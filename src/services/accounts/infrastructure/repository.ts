@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import type { EntityManager } from 'typeorm';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { EntityNotFoundError, type EntityManager } from 'typeorm';
 import { Account } from '../domain/model';
 import { stripUndefined } from '../../../libs/common';
 import { Repository } from '../../../libs/ddd';
@@ -16,9 +16,11 @@ export class AccountRepository extends Repository<Account> {
   }) {
     return (args.transactionalEntityManager ?? this.getManager()).find(Account, {
       where: {
-        ...stripUndefined({
-          userId: args.conditions.userId,
-        }),
+        userId: args.conditions.userId,
+        // ...(args.conditions.userId ? { userId: args.conditions.userId } : {}),
+        // ...stripUndefined({
+        //   userId: args.conditions.userId,
+        // }),
       },
       ...convertOptions(args.options),
     });
@@ -29,16 +31,23 @@ export class AccountRepository extends Repository<Account> {
     options?: FindOptions;
     transactionalEntityManager?: EntityManager;
   }): Promise<Account> {
-    return (args.transactionalEntityManager ?? this.getManager()).findOneOrFail(Account, {
-      where: {
-        ...stripUndefined({
-          userId: args.conditions.userId,
-        }),
-      },
-      ...convertOptions(args.options),
-    });
+    try {
+      return (args.transactionalEntityManager ?? this.getManager()).findOneOrFail(Account, {
+        where: {
+          ...stripUndefined({
+            userId: args.conditions.userId,
+          }),
+        },
+        ...convertOptions(args.options),
+      });
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        throw new BadRequestException('~~');
+      }
+    }
   }
 
+  // ???
   async truncate() {
     await this.getManager().clear(Account);
   }

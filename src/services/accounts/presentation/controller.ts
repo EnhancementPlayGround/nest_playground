@@ -2,18 +2,19 @@ import { Body, Controller, Get, Patch, Query } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { AccountService } from '../application';
 import { AccountListQueryDto, AccountDepositBodyDto, AccountDto } from '../dto';
-import { validationError } from '../../../libs/exceptions';
+import { validationError } from '../../../libs/exceptions'; // 절대경로 필요
 
 @Controller('/accounts')
 export class AccountController {
   constructor(private accountService: AccountService) {}
 
-  @Get('/')
+  @Get()
   async list(@Query() query: AccountListQueryDto): Result<AccountDto[]> {
     // Destructure
     const { userId } = query;
 
     // Call application service
+    // 네이밍이 직관적이지 않다. .list 는 뭔가.. 뭔가...뭔가임
     const data = await this.accountService.list(userId);
 
     // Validate output

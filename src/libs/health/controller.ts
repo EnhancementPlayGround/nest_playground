@@ -8,6 +8,12 @@ export class HealthController {
   @Get()
   @HealthCheck()
   check() {
+    // 통신할 우리 서비스를 healthCheck로 찌르는게 더 낫다 .
     return this.health.check([() => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com')]);
+  }
+
+  @Get('test')
+  healths() {
+    return 'ok';
   }
 }

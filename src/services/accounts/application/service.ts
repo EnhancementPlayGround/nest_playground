@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+
+// 의존방향대로 설정하는게 좋다.
 import { AccountRepository } from '../infrastructure/repository';
 import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { ApplicationService } from '../../../libs/ddd/service';
@@ -24,23 +26,21 @@ export class AccountService extends ApplicationService {
         options: { lock: { mode: 'pessimistic_read' } },
       });
 
-      return accounts.map((account) => {
-        return new AccountDto({ id: account.id, userId: account.userId, balance: account.balance });
-      });
+      return accounts.map(AccountDto.of);
     });
   }
 
-  async deposit(args: { userId: string; amount: number }) {
+  async deposit({ userId, amount }: { userId: string; amount: number }) {
     return this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionalEntityManager);
       const account = await injector(
         this.accountRepository,
         'findOneOrFail',
       )({
-        conditions: { userId: args.userId },
+        conditions: { userId },
         options: { lock: { mode: 'pessimistic_write' } },
       });
-      account.deposit(args.amount);
+      account.deposit(amount);
       await injector(this.accountRepository, 'save')({ target: [account] });
       return new AccountDto({ id: account.id, userId: account.userId, balance: account.balance });
     });
@@ -66,6 +66,7 @@ export class AccountService extends ApplicationService {
       await this.accountRepository.saveEvent({
         events: [new TransactionFailedEvent(userId, totalAmount, 'order', { orderId })],
       });
+
       throw err; // TODO: 로깅
     }
   }
