@@ -6,6 +6,14 @@ import { OrderProductLog } from '../domain/model';
 import { OrderPaidEvent } from '../../orders/domain/events/order-paid-event';
 import { OrderRepository } from '../../orders/infrastructure/repository';
 
+type rankingOutput = {
+  productId: string;
+  totalPrice: number;
+  totalQuantity: number;
+  name: string;
+  price: number;
+};
+
 @Injectable()
 export class OrderProductLogService extends ApplicationService {
   constructor(private orderProductLogRepository: OrderProductLogRepository, private orderRepository: OrderRepository) {
@@ -20,7 +28,7 @@ export class OrderProductLogService extends ApplicationService {
     occurredAtStart: Date;
     occurredAtEnd: Date;
     limit: number;
-  }) {
+  }): Promise<rankingOutput[]> {
     return this.orderProductLogRepository.getRanking({
       conditions: { occurredAtStart, occurredAtEnd },
       options: { limit },
