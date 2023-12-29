@@ -3,10 +3,10 @@ import { plainToClass } from 'class-transformer';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { getConfig } from '@config';
 import { AccountController } from '../../../../src/services/accounts/presentation/controller';
 import { AccountService } from '../../../../src/services/accounts/application';
 import { AccountRepository } from '../../../../src/services/accounts/infrastructure/repository';
-import { getConfig } from '../../../../src/config';
 import { Account } from '../../../../src/services/accounts/domain/model';
 
 describe('Account Service integration test', () => {

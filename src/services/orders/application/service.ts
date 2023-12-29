@@ -20,16 +20,16 @@ export class OrderService extends ApplicationService {
     super();
   }
 
-  async order(args: { userId: string; lines: { productId: string; quantity: number }[] }) {
+  async order({ userId, lines }: { userId: string; lines: { productId: string; quantity: number }[] }) {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionalEntityManager);
       const products = await this.productRepository.find({
-        conditions: { ids: args.lines.map((line) => line.productId) },
+        conditions: { ids: lines.map((line) => line.productId) },
       });
 
       const order = Order.from({
-        userId: args.userId,
-        lines: args.lines,
+        userId,
+        lines,
         calculateOrderService: this.calculateOrderService,
         products,
       });
@@ -44,7 +44,7 @@ export class OrderService extends ApplicationService {
         this.accountRepository,
         'findOneOrFail',
       )({
-        conditions: { userId: args.userId },
+        conditions: { userId },
         options: { lock: { mode: 'pessimistic_write' } },
       });
 
@@ -65,12 +65,7 @@ export class OrderService extends ApplicationService {
         console.error(e);
       });
 
-      return new OrderDto({
-        id: order.id,
-        userId: order.userId,
-        lines: order.lines,
-        totalAmount: order.totalAmount,
-      });
+      return OrderDto.of(order);
     });
   }
 }

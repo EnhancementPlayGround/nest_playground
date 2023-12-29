@@ -21,25 +21,23 @@ export class AccountService extends ApplicationService {
         options: { lock: { mode: 'pessimistic_read' } },
       });
 
-      return accounts.map((account) => {
-        return new AccountDto({ id: account.id, userId: account.userId, balance: account.balance });
-      });
+      return accounts.map(AccountDto.of);
     });
   }
 
-  async deposit(args: { userId: string; amount: number }) {
+  async deposit({ userId, amount }: { userId: string; amount: number }) {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionalEntityManager);
       const account = await injector(
         this.accountRepository,
         'findOneOrFail',
       )({
-        conditions: { userId: args.userId },
+        conditions: { userId },
         options: { lock: { mode: 'pessimistic_write' } },
       });
-      account.deposit(args.amount);
+      account.deposit(amount);
       await injector(this.accountRepository, 'save')({ target: [account] });
-      return new AccountDto({ id: account.id, userId: account.userId, balance: account.balance });
+      return AccountDto.of(account);
     });
   }
 }

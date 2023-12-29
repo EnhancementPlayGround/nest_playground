@@ -7,6 +7,7 @@ module.exports = {
   },
   moduleNameMapper: {
     '^@libs/(.*)$': '<rootDir>/src/libs/$1',
+    '^@config': '<rootDir>/src/config',
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleFileExtensions: ['ts', 'js'],

@@ -13,11 +13,15 @@ export class AccountDto {
   @IsNumber({}, { message: '잔액은 숫자여야 합니다.' })
   balance!: number;
 
-  constructor(args: AccountDto) {
+  constructor(args: { id: string; userId: string; balance: number }) {
     if (args) {
       this.id = args.id;
       this.userId = args.userId;
       this.balance = args.balance;
     }
+  }
+
+  static of(args: { id: string; userId: string; balance: number }) {
+    return new AccountDto(args);
   }
 }

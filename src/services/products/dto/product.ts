@@ -17,12 +17,16 @@ export class ProductDto {
   @IsNumber({}, { message: '재고는 숫자여야 합니다.' })
   stock!: number;
 
-  constructor(args: ProductDto) {
+  constructor(args: { id: string; name: string; price: number; stock: number }) {
     if (args) {
       this.id = args.id;
       this.name = args.name;
       this.price = args.price;
       this.stock = args.stock;
     }
+  }
+
+  static of(args: { id: string; name: string; price: number; stock: number }) {
+    return new ProductDto(args);
   }
 }

@@ -11,7 +11,8 @@
     "skipLibCheck": true,
     "strict": true,
     "paths": {
-      "@libs/*": ["src/libs/*"]
+      "@libs/*": ["src/libs/*"],
+      "@config": ["src/config"]
     },
     "resolveJsonModule": true,
     "removeComments": true,
