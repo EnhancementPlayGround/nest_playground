@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Patch, Query } from '@nestjs/common';
 import { validate } from 'class-validator';
+import { validationError } from '@libs/exceptions';
 import { AccountService } from '../application';
 import { AccountListQueryDto, AccountDepositBodyDto, AccountDto } from '../dto';
-import { validationError } from '../../../libs/exceptions';
 
 @Controller('/accounts')
 export class AccountController {

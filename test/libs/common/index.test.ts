@@ -1,4 +1,4 @@
-import { stripUndefined } from '../../../src/libs/common';
+import { stripUndefined } from '@libs/common';
 
 describe('stripUndefined test', () => {
   test('object 중 undefined를 제거한다.', () => {

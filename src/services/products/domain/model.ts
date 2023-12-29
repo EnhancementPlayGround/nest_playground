@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { VersionedAggregate } from '../../../libs/ddd';
-import { badRequest } from '../../../libs/exceptions';
+import { VersionedAggregate } from '@libs/ddd';
+import { badRequest } from '@libs/exceptions';
 
 @Entity()
 export class Product extends VersionedAggregate {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from '../../../libs/ddd';
+import { Repository } from '@libs/ddd';
+import { internalServerError } from '@libs/exceptions';
 import { Order } from '../domain/model';
-import { internalServerError } from '../../../libs/exceptions';
 
 @Injectable()
 export class OrderRepository extends Repository<Order> {

@@ -10,13 +10,16 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    "paths": {
+      "@libs/*": ["src/libs/*"]
+    },
     "resolveJsonModule": true,
     "removeComments": true,
     "noErrorTruncation": true,
     "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
     "inlineSources": true,
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "outDir": "./dist",
     "useUnknownInCatchVariables": false,
     "typeRoots": ["./node_modules/@types", "src/@types"]

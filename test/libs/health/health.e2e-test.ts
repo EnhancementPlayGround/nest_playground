@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { HealthModule } from '../../../src/libs/health/module';
+import { HealthModule } from '@libs/health/module';
 
 describe('Health e2e', () => {
   let app: INestApplication;
@@ -14,15 +14,7 @@ describe('Health e2e', () => {
     await app.init();
   });
 
-  test('/health (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/health')
-      .expect(200)
-      .expect({
-        status: 'ok',
-        info: { 'nestjs-docs': { status: 'up' } },
-        error: {},
-        details: { 'nestjs-docs': { status: 'up' } },
-      });
+  test('/ping (GET)', () => {
+    return request(app.getHttpServer()).get('/ping').expect(200).expect('pong');
   });
 });

@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { plainToClass } from 'class-transformer';
+import { badRequest } from '@libs/exceptions';
 import { Account } from '../../../../src/services/accounts/domain/model';
-import { badRequest } from '../../../../src/libs/exceptions';
 
 jest.mock('nanoid');
 

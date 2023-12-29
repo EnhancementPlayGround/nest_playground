@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { nanoid } from 'nanoid';
-import { Aggregate } from '../../../libs/ddd';
+import { Aggregate } from '@libs/ddd';
 
 @Entity()
 export class User extends Aggregate {

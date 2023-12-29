@@ -5,6 +5,9 @@ module.exports = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
+  moduleNameMapper: {
+    '^@libs/(.*)$': '<rootDir>/src/libs/$1',
+  },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleFileExtensions: ['ts', 'js'],
   moduleDirectories: ['node_modules'],

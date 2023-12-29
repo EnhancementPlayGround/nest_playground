@@ -1,4 +1,4 @@
-import { convertOptions } from '../../../src/libs/orm';
+import { convertOptions } from '@libs/orm';
 
 describe('ORM lib test', () => {
   describe('convertOptions test', () => {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { injectTransactionalEntityManager } from '@libs/transactional';
+import { ApplicationService } from '@libs/ddd/service';
 import { AccountRepository } from '../infrastructure/repository';
-import { injectTransactionalEntityManager } from '../../../libs/transactional';
-import { ApplicationService } from '../../../libs/ddd/service';
 import { AccountDto } from '../dto';
 
 @Injectable()

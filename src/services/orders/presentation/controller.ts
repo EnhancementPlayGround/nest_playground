@@ -1,8 +1,8 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { validate } from 'class-validator';
+import { validationError } from '@libs/exceptions';
 import { OrderService } from '../application';
 import { OrderBodyDto, OrderDto } from '../dto';
-import { validationError } from '../../../libs/exceptions';
 
 @Controller('/orders')
 export class OrderController {

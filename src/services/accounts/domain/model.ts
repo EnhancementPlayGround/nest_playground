@@ -1,7 +1,7 @@
 import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { nanoid } from 'nanoid';
-import { Aggregate } from '../../../libs/ddd';
-import { badRequest } from '../../../libs/exceptions';
+import { Aggregate } from '@libs/ddd';
+import { badRequest } from '@libs/exceptions';
 
 @Entity()
 @Index('Idx_userId', ['userId'])

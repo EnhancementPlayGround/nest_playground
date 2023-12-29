@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
-import { VersionedRepository } from '../../../libs/ddd';
+import { VersionedRepository } from '@libs/ddd';
+import { stripUndefined } from '@libs/common';
+import { FindOptions, InValues, convertOptions } from '@libs/orm';
 import { Product } from '../domain/model';
-import { stripUndefined } from '../../../libs/common';
-import { FindOptions, InValues, convertOptions } from '../../../libs/orm';
 
 @Injectable()
 export class ProductRepository extends VersionedRepository<Product> {
