@@ -16,8 +16,8 @@ export class OrderProductLogRepository extends Repository<OrderProductLog> {
     return this.getManager()
       .createQueryBuilder(OrderProductLog, 'orderProductLog')
       .select('orderProductLog.productId', 'productId')
-      .addSelect('SUM(orderProductLog.price)', 'totalPrice')
-      .addSelect('SUM(orderProductLog.quantity)', 'totalQuantity')
+      .addSelect('CAST(SUM(orderProductLog.price) AS SIGNED)', 'totalPrice')
+      .addSelect('CAST(SUM(orderProductLog.quantity) AS SIGNED)', 'totalQuantity')
       .where('orderProductLog.occurredAt BETWEEN :occurredAtStart AND :occurredAtEnd', {
         occurredAtStart: conditions.occurredAtStart,
         occurredAtEnd: conditions.occurredAtEnd,

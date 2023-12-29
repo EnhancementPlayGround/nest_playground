@@ -8,7 +8,7 @@ import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { CalculateOrderService } from '../domain/services';
 import { OrderDto } from '../dto';
 import { TransactionOccurredEvent } from '../../accounts/domain/events';
-import { OrderCreatedEvent } from '../domain/events';
+import { OrderCreatedEvent, OrderPaidEvent } from '../domain/events';
 import { ProductOrderFailedEvent } from '../../products/domain/events';
 import { TransactionFailedEvent } from '../../accounts/domain/events/transaction-failed-event';
 
@@ -86,5 +86,12 @@ export class OrderService extends ApplicationService {
 
       await injector(this.orderRepository, 'softDelete')({ target: [order] });
     });
+  }
+
+  @OnEvent('OrderPaidEvent')
+  async onOrderPaidEvent(event: OrderPaidEvent) {
+    const { orderId } = event;
+    const [order] = await this.orderRepository.find({ conditions: { ids: [orderId] } });
+    await this.orderRepository.sendToDataPlatform({ order });
   }
 }
