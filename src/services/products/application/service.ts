@@ -16,7 +16,7 @@ export class ProductService extends ApplicationService {
     super();
   }
 
-  async list({ ids }: { ids?: string[] }) {
+  async getList({ ids }: { ids?: string[] }) {
     const products = await this.productRepository.find({ conditions: { ids } });
 
     return products.map(ProductDto.of);

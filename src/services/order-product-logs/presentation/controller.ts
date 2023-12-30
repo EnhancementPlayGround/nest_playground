@@ -19,7 +19,7 @@ export class OrderProductLogController {
       occurredAtEnd,
       limit,
     });
-    const products = await this.productService.list({ ids: rankings.map((ranking) => ranking.productId) });
+    const products = await this.productService.getList({ ids: rankings.map((ranking) => ranking.productId) });
 
     // Validate output
     // Return result

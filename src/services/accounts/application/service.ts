@@ -13,7 +13,7 @@ export class AccountService extends ApplicationService {
     super();
   }
 
-  async list(userId: string) {
+  async getList(userId: string) {
     return this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
       const injector = injectTransactionalEntityManager(transactionalEntityManager);
       const accounts = await injector(

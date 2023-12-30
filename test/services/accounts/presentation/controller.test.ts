@@ -33,10 +33,10 @@ describe('AccountController', () => {
     accountService = moduleRef.get<AccountService>(AccountService);
   });
 
-  describe('list test', () => {
+  describe('getList test', () => {
     let accountServiceListSpy: jest.SpyInstance;
     beforeEach(() => {
-      accountServiceListSpy = jest.spyOn(accountService, 'list').mockResolvedValueOnce([
+      accountServiceListSpy = jest.spyOn(accountService, 'getList').mockResolvedValueOnce([
         plainToClass(AccountDto, {
           id: 'test',
           userId: 'test',

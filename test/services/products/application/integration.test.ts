@@ -34,7 +34,7 @@ describe('Product Service integration test', () => {
     await dataSource.destroy();
   });
 
-  describe('list test', () => {
+  describe('getList test', () => {
     const testProducts = [
       plainToClass(Product, {
         id: 'productTest1',
@@ -60,7 +60,7 @@ describe('Product Service integration test', () => {
     });
 
     test('어카운트 list를 조회한다.', async () => {
-      const result = await productService.list({ ids: ['productTest1', 'productTest2'] });
+      const result = await productService.getList({ ids: ['productTest1', 'productTest2'] });
       expect(result).toEqual([
         {
           id: 'productTest1',

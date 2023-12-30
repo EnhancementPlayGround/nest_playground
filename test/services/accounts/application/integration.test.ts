@@ -30,7 +30,7 @@ describe('Account Service integration test', () => {
     await dataSource.destroy();
   });
 
-  describe('list test', () => {
+  describe('getList test', () => {
     beforeAll(async () => {
       await accountRepository.save({
         target: [
@@ -53,7 +53,7 @@ describe('Account Service integration test', () => {
     });
 
     test('어카운트 list를 조회한다.', async () => {
-      const result = await accountService.list('accountTest1');
+      const result = await accountService.getList('accountTest1');
       expect(result).toEqual([
         {
           id: 'accountTest1',
@@ -115,7 +115,7 @@ describe('Account Service integration test', () => {
         accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
       ]);
 
-      const [result] = await accountService.list('accountTest1');
+      const [result] = await accountService.getList('accountTest1');
       expect(result).toEqual({
         id: 'accountTest1',
         userId: 'accountTest1',

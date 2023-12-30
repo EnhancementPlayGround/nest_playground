@@ -14,7 +14,7 @@ export class AccountController {
     const { userId } = query;
 
     // Call application service
-    const data = await this.accountService.list(userId);
+    const data = await this.accountService.getList(userId);
 
     // Validate output
     const [error] = await validate(data);
