@@ -98,8 +98,7 @@ describe('Order Service integration test', () => {
       await accountRepository.remove({ target: testAccounts });
     });
 
-    // FIXME: 실패 원인 파악
-    test.skip('주문을 생성하고 재고 차감, account 출금을 한다.', async () => {
+    test('주문을 생성하고 재고 차감, account 출금을 한다.', async () => {
       const result = await orderService.order({
         userId: 'orderTest1',
         lines: [
