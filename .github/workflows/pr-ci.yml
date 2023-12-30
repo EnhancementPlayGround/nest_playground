@@ -58,7 +58,7 @@ jobs:
         run: npm run migration:test
       - name: test
         run: |
-          npm test
+          npm test && npm run test:e2e
       - name: Test db container down
         run: npm run test:docker:down
   build:
