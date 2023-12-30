@@ -19,9 +19,7 @@ export class ProductService extends ApplicationService {
   async list({ ids }: { ids?: string[] }) {
     const products = await this.productRepository.find({ conditions: { ids } });
 
-    return products.map(
-      (product) => new ProductDto({ id: product.id, name: product.name, price: product.price, stock: product.stock }),
-    );
+    return products.map(ProductDto.of);
   }
 
   async retrieve({ id }: { id: string }) {
@@ -34,7 +32,7 @@ export class ProductService extends ApplicationService {
         conditions: { ids: [id] },
         options: { lock: { mode: 'pessimistic_read' } },
       });
-      return new ProductDto({ id: product.id, name: product.name, price: product.price, stock: product.stock });
+      return ProductDto.of(product);
     });
   }
 

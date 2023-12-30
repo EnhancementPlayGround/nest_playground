@@ -24,9 +24,7 @@ export class AccountService extends ApplicationService {
         options: { lock: { mode: 'pessimistic_read' } },
       });
 
-      return accounts.map((account) => {
-        return new AccountDto({ id: account.id, userId: account.userId, balance: account.balance });
-      });
+      return accounts.map(AccountDto.of);
     });
   }
 
@@ -42,7 +40,7 @@ export class AccountService extends ApplicationService {
       });
       account.deposit(args.amount);
       await injector(this.accountRepository, 'save')({ target: [account] });
-      return new AccountDto({ id: account.id, userId: account.userId, balance: account.balance });
+      return AccountDto.of(account);
     });
   }
 

@@ -38,12 +38,7 @@ export class OrderService extends ApplicationService {
 
       await injector(this.orderRepository, 'save')({ target: [order] });
 
-      return new OrderDto({
-        id: order.id,
-        userId: order.userId,
-        lines: order.lines,
-        totalAmount: order.totalAmount,
-      });
+      return OrderDto.of(order);
     });
     await this.orderRepository.saveEvent({
       events: [new OrderCreatedEvent(order.id, order.userId, order.totalAmount, order.lines)],

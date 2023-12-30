@@ -51,4 +51,8 @@ export class OrderDto {
       this.lines = args.lines.map((line) => new LineDto(line));
     }
   }
+
+  static of(args: { id: string; userId: string; totalAmount: number; lines: LineDto[] }) {
+    return new OrderDto(args);
+  }
 }
