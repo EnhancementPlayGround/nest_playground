@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { ApplicationService } from '../../../libs/ddd';
+import { ApplicationService } from '@libs/ddd';
+import { injectTransactionalEntityManager } from '@libs/transactional';
 import { OrderRepository } from '../infrastructure/repository';
 import { ProductRepository } from '../../products/infrastructure/repository';
 import { Order } from '../domain/model';
-import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { CalculateOrderService } from '../domain/services';
 import { OrderDto } from '../dto';
 import { TransactionOccurredEvent } from '../../accounts/domain/events';
@@ -38,12 +38,7 @@ export class OrderService extends ApplicationService {
 
       await injector(this.orderRepository, 'save')({ target: [order] });
 
-      return new OrderDto({
-        id: order.id,
-        userId: order.userId,
-        lines: order.lines,
-        totalAmount: order.totalAmount,
-      });
+      return OrderDto.of(order);
     });
     await this.orderRepository.saveEvent({
       events: [new OrderCreatedEvent(order.id, order.userId, order.totalAmount, order.lines)],

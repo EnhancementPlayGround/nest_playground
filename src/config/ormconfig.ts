@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { DataSource } from 'typeorm';
-import { DomainEvent } from '../libs/ddd/event';
+import { DomainEvent } from '@libs/ddd/event';
 
 const mysqlConfig = {
   type: 'mysql',

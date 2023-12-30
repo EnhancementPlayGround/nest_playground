@@ -3,10 +3,10 @@ import { plainToClass } from 'class-transformer';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { getConfig } from '@config';
 import { AccountController } from '../../../../src/services/accounts/presentation/controller';
 import { AccountService } from '../../../../src/services/accounts/application';
 import { AccountRepository } from '../../../../src/services/accounts/infrastructure/repository';
-import { getConfig } from '../../../../src/config';
 import { Account } from '../../../../src/services/accounts/domain/model';
 
 describe('Account Service integration test', () => {
@@ -30,7 +30,7 @@ describe('Account Service integration test', () => {
     await dataSource.destroy();
   });
 
-  describe('list test', () => {
+  describe('getList test', () => {
     beforeAll(async () => {
       await accountRepository.save({
         target: [
@@ -53,7 +53,7 @@ describe('Account Service integration test', () => {
     });
 
     test('어카운트 list를 조회한다.', async () => {
-      const result = await accountService.list('accountTest1');
+      const result = await accountService.getList('accountTest1');
       expect(result).toEqual([
         {
           id: 'accountTest1',
@@ -115,7 +115,7 @@ describe('Account Service integration test', () => {
         accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
       ]);
 
-      const [result] = await accountService.list('accountTest1');
+      const [result] = await accountService.getList('accountTest1');
       expect(result).toEqual({
         id: 'accountTest1',
         userId: 'accountTest1',

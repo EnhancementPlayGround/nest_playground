@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Patch, Query } from '@nestjs/common';
 import { validate } from 'class-validator';
+import { validationError } from '@libs/exceptions';
 import { AccountService } from '../application';
 import { AccountListQueryDto, AccountDepositBodyDto, AccountDto } from '../dto';
-import { validationError } from '../../../libs/exceptions';
 
 @Controller('/accounts')
 export class AccountController {
@@ -14,7 +14,7 @@ export class AccountController {
     const { userId } = query;
 
     // Call application service
-    const data = await this.accountService.list(userId);
+    const data = await this.accountService.getList(userId);
 
     // Validate output
     const [error] = await validate(data);

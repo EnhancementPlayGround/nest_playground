@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { keyBy } from 'lodash';
-import { ApplicationService } from '../../../libs/ddd';
+import { ApplicationService } from '@libs/ddd';
+import { injectTransactionalEntityManager } from '@libs/transactional';
 import { ProductRepository } from '../infrastructure/repository';
-import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { ProductDto } from '../dto';
 import { OrderCreatedEvent } from '../../orders/domain/events';
 import { ProductOrderFailedEvent, ProductOrderedEvent } from '../domain/events';
@@ -17,12 +17,10 @@ export class ProductService extends ApplicationService {
     super();
   }
 
-  async list({ ids }: { ids?: string[] }) {
+  async getList({ ids }: { ids?: string[] }) {
     const products = await this.productRepository.find({ conditions: { ids } });
 
-    return products.map(
-      (product) => new ProductDto({ id: product.id, name: product.name, price: product.price, stock: product.stock }),
-    );
+    return products.map(ProductDto.of);
   }
 
   async retrieve({ id }: { id: string }) {
@@ -35,7 +33,7 @@ export class ProductService extends ApplicationService {
         conditions: { ids: [id] },
         options: { lock: { mode: 'pessimistic_read' } },
       });
-      return new ProductDto({ id: product.id, name: product.name, price: product.price, stock: product.stock });
+      return ProductDto.of(product);
     });
   }
 

@@ -1,8 +1,8 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from '@libs/exceptions';
+import { getConfig } from '@config';
 import { AppModule } from './app.module';
-import { getConfig } from './config';
-import { HttpExceptionFilter } from './libs/exceptions';
 
 const PORT = getConfig('/server/port');
 

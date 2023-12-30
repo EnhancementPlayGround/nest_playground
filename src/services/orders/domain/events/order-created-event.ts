@@ -1,4 +1,4 @@
-import { DomainEvent } from '../../../../libs/ddd/event';
+import { DomainEvent } from '@libs/ddd/event';
 
 export class OrderCreatedEvent extends DomainEvent {
   constructor(

@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Aggregate } from '../../../libs/ddd';
+import { Aggregate } from '@libs/ddd';
 
 @Entity()
 export class OrderProductLog extends Aggregate {

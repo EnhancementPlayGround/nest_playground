@@ -5,10 +5,10 @@ import { Reflector } from '@nestjs/core';
 import { DataSource } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import * as request from 'supertest';
-import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter';
 import { nanoid } from 'nanoid';
-import { getConfig } from '../../../src/config';
-import { HttpExceptionFilter } from '../../../src/libs/exceptions';
+import { getConfig } from '@config';
+import { HttpExceptionFilter } from '@libs/exceptions';
 import { OrderModule } from '../../../src/services/orders/module';
 import { ProductModule } from '../../../src/services/products/module';
 import { ProductRepository } from '../../../src/services/products/infrastructure/repository';
@@ -26,6 +26,7 @@ describe('Order E2E test', () => {
   let accountRepository: AccountRepository;
   let orderRepository: OrderRepository;
   let dataSource: DataSource;
+  let eventEmitter: EventEmitter2;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -48,6 +49,7 @@ describe('Order E2E test', () => {
     accountRepository = moduleFixture.get<AccountRepository>(AccountRepository);
     orderRepository = moduleFixture.get<OrderRepository>(OrderRepository);
     dataSource = moduleFixture.get<DataSource>(DataSource);
+    eventEmitter = moduleFixture.get<EventEmitter2>(EventEmitter2);
   });
 
   afterAll(async () => {
@@ -116,6 +118,14 @@ describe('Order E2E test', () => {
             ],
           },
         });
+
+      // NOTE: eventEmitter가 전부 끝날때 까지 조회를 멈춘다.
+      await new Promise<void>((resolve) => {
+        eventEmitter.on('OrderPaidEvent', () => {
+          resolve();
+        });
+      });
+
       await request(app.getHttpServer())
         .get('/products/e2eOrderTest1')
         .expect(200)

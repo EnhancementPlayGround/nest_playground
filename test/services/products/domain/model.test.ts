@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer';
+import { badRequest } from '@libs/exceptions';
 import { Product } from '../../../../src/services/products/domain/model';
-import { badRequest } from '../../../../src/libs/exceptions';
 
 describe('Product domain test', () => {
   describe('Ordered test', () => {
