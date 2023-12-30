@@ -1,8 +1,8 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { validate } from 'class-validator';
+import { validationError } from '@libs/exceptions';
 import { ProductService } from '../application/service';
 import { ProductDto, ProductRetrieveParamDto } from '../dto';
-import { validationError } from '../../../libs/exceptions';
 
 @Controller('/products')
 export class ProductController {

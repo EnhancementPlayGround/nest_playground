@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { ApplicationService } from '../../../libs/ddd';
+import { ApplicationService } from '@libs/ddd';
 import { OrderProductLogRepository } from '../infrastructure/repository';
 import { OrderProductLog } from '../domain/model';
 import { OrderPaidEvent } from '../../orders/domain/events/order-paid-event';

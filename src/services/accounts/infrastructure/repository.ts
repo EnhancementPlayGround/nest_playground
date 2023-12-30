@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import type { EntityManager } from 'typeorm';
+import { Repository } from '@libs/ddd';
+import { FindOptions, convertOptions } from '@libs/orm';
 import { Account } from '../domain/model';
-import { Repository } from '../../../libs/ddd';
-import { FindOptions, convertOptions } from '../../../libs/orm';
 
 @Injectable()
 export class AccountRepository extends Repository<Account> {

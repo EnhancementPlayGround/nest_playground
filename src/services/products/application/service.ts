@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { keyBy } from 'lodash';
-import { ApplicationService } from '../../../libs/ddd';
+import { ApplicationService } from '@libs/ddd';
+import { injectTransactionalEntityManager } from '@libs/transactional';
 import { ProductRepository } from '../infrastructure/repository';
-import { injectTransactionalEntityManager } from '../../../libs/transactional';
 import { ProductDto } from '../dto';
 import { OrderCreatedEvent } from '../../orders/domain/events';
 import { ProductOrderFailedEvent, ProductOrderedEvent } from '../domain/events';

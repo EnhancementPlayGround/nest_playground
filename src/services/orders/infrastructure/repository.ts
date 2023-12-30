@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import type { EntityManager } from 'typeorm';
-import { Repository } from '../../../libs/ddd';
+import { Repository } from '@libs/ddd';
+import { internalServerError } from '@libs/exceptions';
+import { convertOptions, InValues, type FindOptions } from '@libs/orm';
 import { Order } from '../domain/model';
-import { internalServerError } from '../../../libs/exceptions';
-import { convertOptions, InValues, type FindOptions } from '../../../libs/orm';
 
 @Injectable()
 export class OrderRepository extends Repository<Order> {

@@ -4,7 +4,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { forwardRef } from '@nestjs/common';
-import { getConfig } from '../../../../src/config';
+import { getConfig } from '@config';
 import { ProductService } from '../../../../src/services/products/application';
 import { ProductRepository } from '../../../../src/services/products/infrastructure/repository';
 import { Product } from '../../../../src/services/products/domain/model';

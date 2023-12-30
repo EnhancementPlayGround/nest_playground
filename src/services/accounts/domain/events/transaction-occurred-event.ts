@@ -1,4 +1,4 @@
-import { DomainEvent } from '../../../../libs/ddd/event';
+import { DomainEvent } from '@libs/ddd/event';
 import type { TransactionType } from '../model';
 
 export class TransactionOccurredEvent extends DomainEvent {

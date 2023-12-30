@@ -6,7 +6,8 @@ import { DataSource } from 'typeorm';
 import { ClassSerializerInterceptor, ValidationPipe, forwardRef } from '@nestjs/common';
 import { nanoid } from 'nanoid';
 import { Reflector } from '@nestjs/core';
-import { getConfig } from '../../../../src/config';
+import { HttpExceptionFilter } from '@libs/exceptions';
+import { getConfig } from '@config';
 import { OrderService } from '../../../../src/services/orders/application';
 import { ProductModule } from '../../../../src/services/products/module';
 import { OrderRepository } from '../../../../src/services/orders/infrastructure/repository';
@@ -16,7 +17,6 @@ import { Product } from '../../../../src/services/products/domain/model';
 import { Account } from '../../../../src/services/accounts/domain/model';
 import { CalculateOrderService } from '../../../../src/services/orders/domain/services';
 import { AccountModule } from '../../../../src/services/accounts/module';
-import { HttpExceptionFilter } from '../../../../src/libs/exceptions';
 
 jest.mock('nanoid');
 

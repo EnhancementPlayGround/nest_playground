@@ -12,11 +12,15 @@
     "strict": true,
     "resolveJsonModule": true,
     "removeComments": true,
+    "paths": {
+      "@libs/*": ["src/libs/*"],
+      "@config": ["src/config"]
+    },
     "noErrorTruncation": true,
     "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
     "inlineSources": true,
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "outDir": "./dist",
     "useUnknownInCatchVariables": false,
     "typeRoots": ["./node_modules/@types", "src/@types"]

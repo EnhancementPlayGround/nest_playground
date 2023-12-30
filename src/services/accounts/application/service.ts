@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { injectTransactionalEntityManager } from '@libs/transactional';
+import { ApplicationService } from '@libs/ddd/service';
 import { AccountRepository } from '../infrastructure/repository';
-import { injectTransactionalEntityManager } from '../../../libs/transactional';
-import { ApplicationService } from '../../../libs/ddd/service';
 import { AccountDto } from '../dto';
 import { ProductOrderedEvent } from '../../products/domain/events';
 import { TransactionOccurredEvent, TransactionFailedEvent } from '../domain/events';
