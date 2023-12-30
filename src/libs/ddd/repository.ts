@@ -17,15 +17,19 @@ export abstract class Repository<T extends Aggregate> {
 
   async save(args: { target: T[]; transactionalEntityManager?: EntityManager }) {
     await (args.transactionalEntityManager ?? this.getManager()).save(args.target);
-    await this.saveEvent(
-      args.target.flatMap((entity) => entity.getPublishedEvents()),
-      args.transactionalEntityManager,
-    );
+    await this.saveEvent({
+      events: args.target.flatMap((entity) => entity.getPublishedEvents()),
+      transactionalEntityManager: args.transactionalEntityManager,
+    });
   }
 
-  private async saveEvent(events: DomainEvent[], transactionalEntityManager?: EntityManager) {
-    await (transactionalEntityManager ?? this.getManager()).save(DomainEvent, events);
-    await Promise.all(events.map((event) => this.eventEmitter.emitAsync(event.type, event)));
+  async saveEvent(args: { events: DomainEvent[]; transactionalEntityManager?: EntityManager }) {
+    await (args.transactionalEntityManager ?? this.getManager()).save(DomainEvent, args.events);
+    await Promise.all(args.events.map((event) => this.eventEmitter.emit(event.type, event)));
+  }
+
+  async remove(args: { target: T[]; transactionalEntityManager?: EntityManager }) {
+    await (args.transactionalEntityManager ?? this.getManager()).remove(args.target);
   }
 }
 

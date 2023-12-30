@@ -44,7 +44,7 @@ describe('Account model test', () => {
         ...baseAccount,
         balance: 2000,
       });
-      account.withdraw(1000);
+      account.withdraw({ amount: 1000 });
       expect(account.balance).toBe(1000);
     });
 
@@ -54,7 +54,7 @@ describe('Account model test', () => {
         balance: 0,
       });
       try {
-        account.withdraw(1000);
+        account.withdraw({ amount: 1000 });
       } catch (err) {
         expect(err).toEqual(
           badRequest('Can not withdraw more than balance.', {

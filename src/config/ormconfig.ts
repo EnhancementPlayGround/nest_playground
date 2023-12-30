@@ -41,7 +41,7 @@ export const ormconfig = {
     synchronize: false,
     migrations: ['src/migrations/*{.ts,.js}'],
     supportBigNumbers: true,
-    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}')],
+    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}'), DomainEvent],
     bigNumberStrings: false,
   },
   $default: {
@@ -55,6 +55,6 @@ export const ormconfig = {
 };
 
 // @ts-expect-error
-const dataSourceForMigration = new DataSource(ormconfig[process.env.NODE_ENV || '$default']);
+const dataSourceForMigration = new DataSource(ormconfig[process.env.NODE_ENV ?? '$default']);
 
 export default dataSourceForMigration;

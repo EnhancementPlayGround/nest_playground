@@ -35,13 +35,13 @@ describe('Account Service integration test', () => {
       await accountRepository.save({
         target: [
           plainToClass(Account, {
-            id: 'test1',
-            userId: 'test1',
+            id: 'accountTest1',
+            userId: 'accountTest1',
             balance: 1000,
           }),
           plainToClass(Account, {
-            id: 'test2',
-            userId: 'test1',
+            id: 'accountTest2',
+            userId: 'accountTest1',
             balance: 2000,
           }),
         ],
@@ -53,16 +53,16 @@ describe('Account Service integration test', () => {
     });
 
     test('어카운트 list를 조회한다.', async () => {
-      const result = await accountService.list('test1');
+      const result = await accountService.list('accountTest1');
       expect(result).toEqual([
         {
-          id: 'test1',
-          userId: 'test1',
+          id: 'accountTest1',
+          userId: 'accountTest1',
           balance: 1000,
         },
         {
-          id: 'test2',
-          userId: 'test1',
+          id: 'accountTest2',
+          userId: 'accountTest1',
           balance: 2000,
         },
       ]);
@@ -70,54 +70,55 @@ describe('Account Service integration test', () => {
   });
 
   describe('deposit test', () => {
+    const testAccounts = [
+      plainToClass(Account, {
+        id: 'accountTest1',
+        userId: 'accountTest1',
+        balance: 1000,
+      }),
+      plainToClass(Account, {
+        id: 'accountTest2',
+        userId: 'accountTest1',
+        balance: 2000,
+      }),
+    ];
     beforeAll(async () => {
       await accountRepository.save({
-        target: [
-          plainToClass(Account, {
-            id: 'test1',
-            userId: 'test1',
-            balance: 1000,
-          }),
-          plainToClass(Account, {
-            id: 'test2',
-            userId: 'test1',
-            balance: 2000,
-          }),
-        ],
+        target: testAccounts,
       });
     });
 
     afterAll(async () => {
-      await accountRepository.truncate();
+      await accountRepository.remove({ target: testAccounts });
     });
 
     test('어카운트의 잔액을 충전한다', async () => {
-      const result = await accountService.deposit({ userId: 'test1', amount: 10000 });
+      const result = await accountService.deposit({ userId: 'accountTest1', amount: 10000 });
       expect(result).toEqual({
-        id: 'test1',
-        userId: 'test1',
+        id: 'accountTest1',
+        userId: 'accountTest1',
         balance: 11000,
       });
     });
 
     test('동시에 충전하더라도 전부 충전 되도록 해야한다.', async () => {
       await Promise.all([
-        accountService.deposit({ userId: 'test1', amount: 10000 }),
-        accountService.deposit({ userId: 'test1', amount: 10000 }),
-        accountService.deposit({ userId: 'test1', amount: 10000 }),
-        accountService.deposit({ userId: 'test1', amount: 10000 }),
-        accountService.deposit({ userId: 'test1', amount: 10000 }),
-        accountService.deposit({ userId: 'test1', amount: 10000 }),
-        accountService.deposit({ userId: 'test1', amount: 10000 }),
-        accountService.deposit({ userId: 'test1', amount: 10000 }),
-        accountService.deposit({ userId: 'test1', amount: 10000 }),
-        accountService.deposit({ userId: 'test1', amount: 10000 }),
+        accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
+        accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
+        accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
+        accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
+        accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
+        accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
+        accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
+        accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
+        accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
+        accountService.deposit({ userId: 'accountTest1', amount: 10000 }),
       ]);
 
-      const [result] = await accountService.list('test1');
+      const [result] = await accountService.list('accountTest1');
       expect(result).toEqual({
-        id: 'test1',
-        userId: 'test1',
+        id: 'accountTest1',
+        userId: 'accountTest1',
         balance: 111000,
       });
     });

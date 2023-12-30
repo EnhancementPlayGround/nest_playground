@@ -93,10 +93,16 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Test db container up
+        run: npm run test:docker:up
       - name: Install dependencies
         run: npm ci
+      - name: db migration
+        run: npm run migration:test
       - name: Test and coverage
         run: npx jest --coverage --passWithNoTests
+      - name: Test db container down
+        run: npm run test:docker:down
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
