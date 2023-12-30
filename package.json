@@ -18,11 +18,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "prepare": "husky install",
-    "migration": "NODE_ENV=$NODE_ENV typeorm-ts-node-commonjs migration:run -d ./src/config/ormconfig",
+    "migration": "NODE_ENV=$NODE_ENV ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig",
     "test:e2e": "NODE_ENV=test jest --config ./test/jest-e2e.json",
     "test:docker:up": "docker-compose -f docker-compose.test.yml up -d",
     "test:docker:down": "docker-compose -f docker-compose.test.yml  down",
-    "migration:test": "NODE_ENV=test typeorm-ts-node-commonjs migration:run -d ./src/config/ormconfig",
+    "migration:test": "NODE_ENV=test ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig",
     "migration:create": "typeorm migration:create ./src/migrations/time"
   },
   "dependencies": {
