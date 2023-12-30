@@ -4,7 +4,6 @@ import { Repository } from '../../../libs/ddd';
 import { Order } from '../domain/model';
 import { internalServerError } from '../../../libs/exceptions';
 import { convertOptions, InValues, type FindOptions } from '../../../libs/orm';
-import { stripUndefined } from '../../../libs/common';
 
 @Injectable()
 export class OrderRepository extends Repository<Order> {
@@ -25,9 +24,7 @@ export class OrderRepository extends Repository<Order> {
   }) {
     return (args.transactionalEntityManager ?? this.getManager()).find(Order, {
       where: {
-        ...stripUndefined({
-          id: InValues(args.conditions.ids),
-        }),
+        id: InValues(args.conditions.ids),
       },
       ...convertOptions(args.options),
     });

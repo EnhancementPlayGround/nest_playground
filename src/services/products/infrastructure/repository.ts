@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { VersionedRepository } from '../../../libs/ddd';
 import { Product } from '../domain/model';
-import { stripUndefined } from '../../../libs/common';
 import { FindOptions, InValues, convertOptions } from '../../../libs/orm';
 
 @Injectable()
@@ -16,9 +15,7 @@ export class ProductRepository extends VersionedRepository<Product> {
   }) {
     return (args.transactionalEntityManager ?? this.getManager()).find(Product, {
       where: {
-        ...stripUndefined({
-          id: InValues(args.conditions.ids),
-        }),
+        id: InValues(args.conditions.ids),
       },
       ...convertOptions(args.options),
     });

@@ -14,15 +14,7 @@ describe('Health e2e', () => {
     await app.init();
   });
 
-  test('/health (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/health')
-      .expect(200)
-      .expect({
-        status: 'ok',
-        info: { 'nestjs-docs': { status: 'up' } },
-        error: {},
-        details: { 'nestjs-docs': { status: 'up' } },
-      });
+  test('/ping (GET)', () => {
+    return request(app.getHttpServer()).get('/ping').expect(200).expect('pong');
   });
 });
