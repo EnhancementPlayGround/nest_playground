@@ -26,6 +26,7 @@
     "migration:create": "typeorm migration:create ./src/migrations/time"
   },
   "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.484.0",
     "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
@@ -41,7 +42,8 @@
     "nanoid": "^3.3.6",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.17"
+    "typeorm": "^0.3.17",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

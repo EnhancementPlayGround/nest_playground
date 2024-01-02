@@ -1,4 +1,5 @@
 import { internalServerError } from '../exceptions';
+import { logger } from '../logger';
 
 type RetryOptions = {
   maxAttemptNumber: number;
@@ -25,6 +26,7 @@ class BackOff<T> {
         this.attempt += 1;
         if (this.attempt >= this.options.maxAttemptNumber) {
           await this.options.onError(err);
+          logger.error(err);
           throw err;
         }
       }

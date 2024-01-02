@@ -11,6 +11,7 @@ module.exports = {
   moduleNameMapper: {
     '^@libs/(.*)$': '<rootDir>/src/libs/$1',
     '^@config': '<rootDir>/src/config',
+    '^@middlewares': '<rootDir>/src/middlewares',
   },
   preset: 'ts-jest',
   testMatch: null,

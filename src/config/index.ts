@@ -18,6 +18,16 @@ const config = {
     production: true,
     $default: false,
   },
+  aws: {
+    accessKeyId: { $env: 'AWS_ACCESS_KEY_ID' },
+    secretAccessKey: { $env: 'AWS_SECRET_ACCESS_KEY' },
+    region: { $env: 'AWS_REGION' },
+    cloudwatch: {
+      groupName: { $env: 'CLOUDWATCH_GROUP_NAME' },
+      streamInfo: { $env: 'CLOUDWATCH_STREAM_INFO' },
+      streamError: { $env: 'CLOUDWATCH_STREAM_ERROR' },
+    },
+  },
 };
 
 const store = new Store(config);
