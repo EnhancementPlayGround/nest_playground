@@ -23,7 +23,7 @@ export class CloudwatchLoggerAddon {
   constructor() {
     this.cloudWatchClient = new CloudWatchLogsClient({
       credentials: {
-        accessKeyId: getConfig('/aws/accessKeyId'),
+        accessKeyId: getConfig('/aws/accessKey'),
         secretAccessKey: getConfig('/aws/secretAccessKey'),
       },
       region: getConfig('/aws/region'),

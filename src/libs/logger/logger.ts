@@ -71,15 +71,6 @@ class Logger {
   }
 
   public error(errMsg: Error | string, metadata = '') {
-    console.log(
-      '!!!',
-      getConfig('/aws/accessKeyId'),
-      getConfig('/aws/secretAccessKey'),
-      getConfig('/aws/region'),
-      getConfig('/aws/cloudwatch/groupName'),
-      getConfig('/aws/cloudwatch/streamInfo'),
-      getConfig('/aws/cloudwatch/streamError'),
-    );
     if (errMsg instanceof Error) {
       const err = errMsg.stack ? errMsg.stack : errMsg.message;
       this.logger.error(`${err}\n======================================\nmetadata: ${metadata}`); // this will now log the error stack trace
