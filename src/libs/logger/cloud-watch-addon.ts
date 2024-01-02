@@ -21,15 +21,6 @@ export class CloudwatchLoggerAddon {
   private cloudwatchConfig: CloudwatchConfig;
 
   constructor() {
-    console.log(
-      '!!!',
-      getConfig('/aws/accessKeyId'),
-      getConfig('/aws/secretAccessKey'),
-      getConfig('/aws/region'),
-      getConfig('/aws/cloudwatch/groupName'),
-      getConfig('/aws/cloudwatch/streamInfo'),
-      getConfig('/aws/cloudwatch/streamError'),
-    );
     this.cloudWatchClient = new CloudWatchLogsClient({
       credentials: {
         accessKeyId: getConfig('/aws/accessKeyId'),
