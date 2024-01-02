@@ -5,7 +5,8 @@
   "testRegex": ".e2e-test.ts$",
   "moduleNameMapper": {
     "^@libs/(.*)$": "<rootDir>/src/libs/$1",
-    "^@config": "<rootDir>/src/config"
+    "^@config": "<rootDir>/src/config",
+    "^@middlewares": "<rootDir>/src/middlewares"
   },
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"

@@ -140,6 +140,12 @@ jobs:
           --build-arg DB_USER=${{ secrets.DB_USER }} \
           --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
           --build-arg DB_NAME=${{ secrets.DB_NAME }} \
+          --build-arg AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
+          --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+          --build-arg AWS_REGION=${{ secrets.AWS_REGION }} \
+          --build-arg CLOUDWATCH_GROUP_NAME=${{ secrets.CLOUDWATCH_GROUP_NAME }} \
+          --build-arg CLOUDWATCH_STREAM_INFO=${{ secrets.CLOUDWATCH_STREAM_INFO }} \
+          --build-arg CLOUDWATCH_STREAM_ERROR=${{ secrets.CLOUDWATCH_STREAM_ERROR }} \
           -f ./Dockerfile.production -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT

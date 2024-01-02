@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { injectTransactionalEntityManager } from '@libs/transactional';
 import { ApplicationService } from '@libs/ddd/service';
+import { logger } from '@libs/logger';
 import { AccountRepository } from '../infrastructure/repository';
 import { AccountDto } from '../dto';
 import { ProductOrderedEvent } from '../../products/domain/events';
@@ -64,7 +65,7 @@ export class AccountService extends ApplicationService {
       await this.accountRepository.saveEvent({
         events: [new TransactionFailedEvent(userId, totalAmount, 'order', { orderId })],
       });
-      throw err; // TODO: 로깅
+      logger.error(err);
     }
   }
 }

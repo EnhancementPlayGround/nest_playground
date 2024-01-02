@@ -11,8 +11,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.useGlobalFilters(new HttpExceptionFilter());
-  await app.listen(PORT).then(() => {
-    console.log('Server Connected 🔥');
-  });
+  await app.listen(PORT);
+  console.log(`Server Connected on ${PORT}🔥`);
 }
 bootstrap();

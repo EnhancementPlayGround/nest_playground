@@ -14,7 +14,8 @@
     "removeComments": true,
     "paths": {
       "@libs/*": ["src/libs/*"],
-      "@config": ["src/config"]
+      "@config": ["src/config"],
+      "@middlewares": ["src/middlewares"]
     },
     "noErrorTruncation": true,
     "forceConsistentCasingInFileNames": true,
