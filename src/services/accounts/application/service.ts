@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { injectTransactionalEntityManager } from '@libs/transactional';
 import { ApplicationService } from '@libs/ddd/service';
 import { logger } from '@libs/logger';
 import { AccountRepository } from '../infrastructure/repository';
@@ -16,13 +15,10 @@ export class AccountService extends ApplicationService {
 
   async getList(userId: string) {
     return this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
-      const injector = injectTransactionalEntityManager(transactionalEntityManager);
-      const accounts = await injector(
-        this.accountRepository,
-        'find',
-      )({
+      const accounts = await this.accountRepository.find({
         conditions: { userId },
         options: { lock: { mode: 'pessimistic_read' } },
+        transactionalEntityManager,
       });
 
       return accounts.map(AccountDto.of);
@@ -31,16 +27,13 @@ export class AccountService extends ApplicationService {
 
   async deposit(args: { userId: string; amount: number }) {
     return this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
-      const injector = injectTransactionalEntityManager(transactionalEntityManager);
-      const account = await injector(
-        this.accountRepository,
-        'findOneOrFail',
-      )({
+      const account = await this.accountRepository.findOneOrFail({
         conditions: { userId: args.userId },
         options: { lock: { mode: 'pessimistic_write' } },
+        transactionalEntityManager,
       });
       account.deposit(args.amount);
-      await injector(this.accountRepository, 'save')({ target: [account] });
+      await this.accountRepository.save({ target: [account], transactionalEntityManager });
       return AccountDto.of(account);
     });
   }
@@ -50,13 +43,13 @@ export class AccountService extends ApplicationService {
     const { userId, orderId, totalAmount } = event;
     try {
       await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
-        const injector = injectTransactionalEntityManager(transactionalEntityManager);
-        const account = await injector(
-          this.accountRepository,
-          'findOneOrFail',
-        )({ conditions: { userId }, options: { lock: { mode: 'pessimistic_write' } } });
+        const account = await this.accountRepository.findOneOrFail({
+          conditions: { userId },
+          options: { lock: { mode: 'pessimistic_write' } },
+          transactionalEntityManager,
+        });
         account.withdraw({ amount: totalAmount });
-        await injector(this.accountRepository, 'save')({ target: [account] });
+        await this.accountRepository.save({ target: [account], transactionalEntityManager });
         await this.accountRepository.saveEvent({
           events: [new TransactionOccurredEvent(account.id, totalAmount, 'order', { orderId })],
         });

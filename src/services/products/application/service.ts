@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { keyBy } from 'lodash';
 import { ApplicationService } from '@libs/ddd';
-import { injectTransactionalEntityManager } from '@libs/transactional';
 import { ProductRepository } from '../infrastructure/repository';
 import { ProductDto } from '../dto';
 import { OrderCreatedEvent } from '../../orders/domain/events';
@@ -24,14 +23,11 @@ export class ProductService extends ApplicationService {
   }
 
   async retrieve({ id }: { id: string }) {
-    return this.dataSource.createEntityManager().transaction(async (transactionEntityManager) => {
-      const injector = injectTransactionalEntityManager(transactionEntityManager);
-      const [product] = await injector(
-        this.productRepository,
-        'find',
-      )({
+    return this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
+      const [product] = await this.productRepository.find({
         conditions: { ids: [id] },
         options: { lock: { mode: 'pessimistic_read' } },
+        transactionalEntityManager,
       });
       return ProductDto.of(product);
     });
@@ -44,12 +40,9 @@ export class ProductService extends ApplicationService {
     await retry({
       request: async () => {
         await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
-          const injector = injectTransactionalEntityManager(transactionalEntityManager);
-          const products = await injector(
-            this.productRepository,
-            'find',
-          )({
+          const products = await this.productRepository.find({
             conditions: { ids: lines.map((line) => line.productId) },
+            transactionalEntityManager,
           });
           const lineOf = keyBy(lines, 'productId');
           products.forEach((product) => {
@@ -57,7 +50,7 @@ export class ProductService extends ApplicationService {
             product.ordered({ quantity: line.quantity });
           });
 
-          await injector(this.productRepository, 'save')({ target: products });
+          await this.productRepository.save({ target: products, transactionalEntityManager });
         });
         // NOTE: 여기서 하는게 맞을까..?
         await this.productRepository.saveEvent({
@@ -80,15 +73,14 @@ export class ProductService extends ApplicationService {
       const { orderId } = transactionDetail;
 
       await this.dataSource.transaction(async (transactionalEntityManager) => {
-        const injector = injectTransactionalEntityManager(transactionalEntityManager);
-
-        const [order] = await injector(this.orderRepository, 'find')({ conditions: { ids: [orderId!] } });
-        const products = await injector(
-          this.productRepository,
-          'find',
-        )({
+        const [order] = await this.orderRepository.find({
+          conditions: { ids: [orderId!] },
+          transactionalEntityManager,
+        });
+        const products = await this.productRepository.find({
           conditions: { ids: order.lines.map((line) => line.productId) },
           options: { lock: { mode: 'pessimistic_write' } },
+          transactionalEntityManager,
         });
 
         const lineOf = keyBy(order.lines, 'productId');
@@ -96,7 +88,7 @@ export class ProductService extends ApplicationService {
           product.cancel({ quantity: lineOf[product.id].quantity });
         });
 
-        await injector(this.productRepository, 'save')({ target: products });
+        await this.productRepository.save({ target: products, transactionalEntityManager });
       });
     }
   }

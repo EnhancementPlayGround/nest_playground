@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ApplicationService } from '@libs/ddd';
-import { injectTransactionalEntityManager } from '@libs/transactional';
 import { OrderRepository } from '../infrastructure/repository';
 import { ProductRepository } from '../../products/infrastructure/repository';
 import { Order } from '../domain/model';
@@ -24,9 +23,9 @@ export class OrderService extends ApplicationService {
 
   async order(args: { userId: string; lines: { productId: string; quantity: number }[] }) {
     const order = await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
-      const injector = injectTransactionalEntityManager(transactionalEntityManager);
       const products = await this.productRepository.find({
         conditions: { ids: args.lines.map((line) => line.productId) },
+        transactionalEntityManager,
       });
 
       const order = Order.from({
@@ -36,7 +35,7 @@ export class OrderService extends ApplicationService {
         products,
       });
 
-      await injector(this.orderRepository, 'save')({ target: [order] });
+      await this.orderRepository.save({ target: [order], transactionalEntityManager });
 
       return OrderDto.of(order);
     });
@@ -52,14 +51,13 @@ export class OrderService extends ApplicationService {
 
     if (event.isOrderSucceed()) {
       await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
-        const injector = injectTransactionalEntityManager(transactionalEntityManager);
-        const [order] = await injector(
-          this.orderRepository,
-          'find',
-        )({ conditions: { ids: [transactionDetail.orderId!] } });
+        const [order] = await this.orderRepository.find({
+          conditions: { ids: [transactionDetail.orderId!] },
+          transactionalEntityManager,
+        });
 
         order.paid();
-        await injector(this.orderRepository, 'save')({ target: [order] });
+        await this.orderRepository.save({ target: [order], transactionalEntityManager });
       });
     }
   }
@@ -76,10 +74,9 @@ export class OrderService extends ApplicationService {
     }
 
     await this.dataSource.createEntityManager().transaction(async (transactionalEntityManager) => {
-      const injector = injectTransactionalEntityManager(transactionalEntityManager);
-      const [order] = await injector(this.orderRepository, 'find')({ conditions: { ids: [orderId] } });
+      const [order] = await this.orderRepository.find({ conditions: { ids: [orderId] }, transactionalEntityManager });
 
-      await injector(this.orderRepository, 'softDelete')({ target: [order] });
+      await this.orderRepository.softDelete({ target: [order], transactionalEntityManager });
     });
   }
 
