@@ -14,10 +14,7 @@ export class OrderProductLogRepository extends Repository<OrderProductLogEntity>
     await this.saveEvent({ events: args.target.flatMap((log) => log.getPublishedEvents()) });
   }
 
-  async remove(args: {
-    target: OrderProductLog[];
-    transactionalEntityManager?: EntityManager | undefined;
-  }): Promise<void> {
+  async remove(args: { target: OrderProductLog[]; transactionalEntityManager?: EntityManager }): Promise<void> {
     const entities = args.target.map(OrderProductLogEntity.of);
     await (args.transactionalEntityManager ?? this.getManager()).remove(entities);
   }

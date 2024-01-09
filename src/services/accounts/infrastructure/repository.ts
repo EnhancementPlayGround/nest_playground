@@ -15,7 +15,7 @@ export class AccountRepository extends Repository<AccountEntity> {
     await this.saveEvent({ events: args.target.flatMap((account) => account.getPublishedEvents()) });
   }
 
-  async remove(args: { target: Account[]; transactionalEntityManager?: EntityManager | undefined }): Promise<void> {
+  async remove(args: { target: Account[]; transactionalEntityManager?: EntityManager }): Promise<void> {
     const entities = args.target.map(AccountEntity.of);
     await (args.transactionalEntityManager ?? this.getManager()).remove(entities);
   }

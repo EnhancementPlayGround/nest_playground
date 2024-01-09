@@ -37,7 +37,7 @@ export class ProductRepository extends Repository<ProductEntity> {
       });
   }
 
-  async remove(args: { target: Product[]; transactionalEntityManager?: EntityManager | undefined }): Promise<void> {
+  async remove(args: { target: Product[]; transactionalEntityManager?: EntityManager }): Promise<void> {
     const entities = args.target.map(ProductEntity.of);
     await (args.transactionalEntityManager ?? this.getManager()).remove(entities);
   }

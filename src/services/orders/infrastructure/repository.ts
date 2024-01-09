@@ -19,7 +19,7 @@ export class OrderRepository extends Repository<OrderEntity> {
     });
   }
 
-  async remove(args: { target: Order[]; transactionalEntityManager?: EntityManager | undefined }): Promise<void> {
+  async remove(args: { target: Order[]; transactionalEntityManager?: EntityManager }): Promise<void> {
     const entities = args.target.map(OrderEntity.of);
     await (args.transactionalEntityManager ?? this.getManager()).remove(entities);
   }
