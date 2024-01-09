@@ -19,7 +19,7 @@ export const ormconfig = {
     synchronize: false,
     // migrations: ['src/migration/**/*.ts'],
     supportBigNumbers: true,
-    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}'), DomainEvent],
+    entities: [join(__dirname, '..', 'services', '**', 'infrastructure', 'entity.{ts,js}'), DomainEvent],
     bigNumberStrings: false,
   },
   development: {
@@ -27,7 +27,7 @@ export const ormconfig = {
     synchronize: true,
     // migrations: ['dist/src/migrations/*.js'],
     supportBigNumbers: true,
-    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}'), DomainEvent],
+    entities: [join(__dirname, '..', 'services', '**', 'infrastructure', 'entity.{ts,js}'), DomainEvent],
     bigNumberStrings: false,
     logging: true,
   },
@@ -41,7 +41,7 @@ export const ormconfig = {
     synchronize: false,
     migrations: ['src/migrations/*{.ts,.js}'],
     supportBigNumbers: true,
-    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}'), DomainEvent],
+    entities: [join(__dirname, '..', 'services', '**', 'infrastructure', 'entity.{ts,js}'), DomainEvent],
     bigNumberStrings: false,
   },
   $default: {
@@ -49,7 +49,7 @@ export const ormconfig = {
     synchronize: false,
     migrations: ['dist/src/migrations/*.js'],
     supportBigNumbers: true,
-    entities: [join(__dirname, '..', 'services', '**', 'domain', 'model.{ts,js}'), DomainEvent],
+    entities: [join(__dirname, '..', 'services', '**', 'infrastructure', 'entity.{ts,js}'), DomainEvent],
     bigNumberStrings: false,
   },
 };

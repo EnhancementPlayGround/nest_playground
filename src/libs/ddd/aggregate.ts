@@ -1,16 +1,7 @@
 import { Exclude } from 'class-transformer';
-import { CreateDateColumn, UpdateDateColumn, VersionColumn } from 'typeorm';
 import { DomainEvent } from './event';
 
 export abstract class Aggregate {
-  @CreateDateColumn()
-  @Exclude()
-  private createdAt!: Date;
-
-  @UpdateDateColumn()
-  @Exclude()
-  private updatedAt!: Date;
-
   @Exclude()
   private events: DomainEvent[] = [];
 
@@ -24,7 +15,6 @@ export abstract class Aggregate {
 }
 
 export class VersionedAggregate extends Aggregate {
-  @VersionColumn({ default: 1 })
   @Exclude()
   version!: number;
 }

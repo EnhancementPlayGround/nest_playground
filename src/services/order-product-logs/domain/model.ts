@@ -1,27 +1,18 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Aggregate } from '@libs/ddd';
 
-@Entity()
 export class OrderProductLog extends Aggregate {
-  @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
   orderId!: string;
 
-  @Column()
   userId!: string;
 
-  @Column()
   productId!: string;
 
-  @Column()
   quantity!: number;
 
-  @Column()
   price!: number;
 
-  @Column()
   occurredAt!: Date;
 
   constructor(args: { orderId: string; userId: string; productId: string; quantity: number; price: number }) {

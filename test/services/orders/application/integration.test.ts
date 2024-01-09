@@ -13,10 +13,10 @@ import { ProductModule } from '../../../../src/services/products/module';
 import { OrderRepository } from '../../../../src/services/orders/infrastructure/repository';
 import { AccountRepository } from '../../../../src/services/accounts/infrastructure/repository';
 import { ProductRepository } from '../../../../src/services/products/infrastructure/repository';
-import { Product } from '../../../../src/services/products/domain/model';
 import { Account } from '../../../../src/services/accounts/domain/model';
 import { CalculateOrderService } from '../../../../src/services/orders/domain/services';
 import { AccountModule } from '../../../../src/services/accounts/module';
+import { Product } from '../../../../src/services/products/domain/model';
 
 jest.mock('nanoid');
 

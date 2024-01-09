@@ -7,6 +7,7 @@ import type { Product } from '../../products/domain/model';
 import { OrderPaidEvent } from './events';
 
 type CtorType = {
+  id?: string;
   userId: string;
   totalAmount: number;
   lines: {
@@ -37,7 +38,7 @@ export class Order extends Aggregate {
   constructor(args: CtorType) {
     super();
     if (args) {
-      this.id = nanoid();
+      this.id = args.id ?? nanoid();
       this.userId = args.userId;
       this.totalAmount = args.totalAmount;
       this.lines = args.lines.map((line) => new OrderLine(line));
@@ -59,6 +60,10 @@ export class Order extends Aggregate {
       lines,
       totalAmount,
     });
+  }
+
+  static of(args: CtorType) {
+    return new Order(args);
   }
 
   // NOTE: 현재는 status가 필요없기 때문에 이렇게 구현했지만 실제로는 status가 필요할 것이다.

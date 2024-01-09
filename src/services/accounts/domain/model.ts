@@ -1,29 +1,24 @@
-import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { nanoid } from 'nanoid';
-import { Aggregate } from '@libs/ddd';
 import { badRequest } from '@libs/exceptions';
+import { Aggregate } from '@libs/ddd';
+import { AccountEntity } from '../infrastructure/entity';
 
 const transactionType = ['order'] as const;
 export type TransactionType = (typeof transactionType)[number];
 
-@Entity()
-@Index('Idx_userId', ['userId'])
 export class Account extends Aggregate {
-  @PrimaryColumn()
   id!: string;
 
-  @Column()
   userId!: string;
 
-  @Column()
   balance!: number;
 
-  constructor(args: { userId: string }) {
+  constructor(args: { id?: string; userId: string; balance?: number }) {
     super();
     if (args) {
-      this.id = nanoid();
+      this.id = args.id ?? nanoid();
       this.userId = args.userId;
-      this.balance = 0;
+      this.balance = args.balance ?? 0;
     }
   }
 
@@ -39,5 +34,13 @@ export class Account extends Aggregate {
     }
 
     this.balance -= amount;
+  }
+
+  static of(args: { id?: string; userId: string; balance?: number }) {
+    return new Account(args);
+  }
+
+  toEntity() {
+    return new AccountEntity(this);
   }
 }
