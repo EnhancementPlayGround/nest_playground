@@ -31,25 +31,26 @@ describe('Account Service integration test', () => {
   });
 
   describe('getList test', () => {
+    const testAccounts = [
+      plainToClass(Account, {
+        id: 'accountTest1',
+        userId: 'accountTest1',
+        balance: 1000,
+      }),
+      plainToClass(Account, {
+        id: 'accountTest2',
+        userId: 'accountTest1',
+        balance: 2000,
+      }),
+    ];
     beforeAll(async () => {
       await accountRepository.save({
-        target: [
-          plainToClass(Account, {
-            id: 'accountTest1',
-            userId: 'accountTest1',
-            balance: 1000,
-          }),
-          plainToClass(Account, {
-            id: 'accountTest2',
-            userId: 'accountTest1',
-            balance: 2000,
-          }),
-        ],
+        target: testAccounts,
       });
     });
 
     afterAll(async () => {
-      await accountRepository.truncate();
+      await accountRepository.remove({ target: testAccounts });
     });
 
     test('어카운트 list를 조회한다.', async () => {
