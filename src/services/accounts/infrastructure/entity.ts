@@ -1,5 +1,5 @@
 import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
-import { BaseEntity } from '../../../libs/ddd/base-entity';
+import { BaseEntity } from '@libs/ddd';
 
 @Entity('account')
 @Index('Idx_userId', ['userId'])
