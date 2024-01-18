@@ -54,6 +54,6 @@ services:
       - '6565:6565'
     environment:
       - K6_OUT=influxdb=http://influxdb:8086/k6
-    command: run /scripts/k6.script.js
+    command: run /scripts/account-deposit.script.js
     volumes:
       - ./scripts:/scripts
