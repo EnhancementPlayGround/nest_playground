@@ -13,12 +13,15 @@ export class Account extends Aggregate {
 
   balance!: number;
 
-  constructor(args: { id?: string; userId: string; balance?: number }) {
+  index?: number;
+
+  constructor(args: { id?: number; userId: string; balance?: number; uniquenessKey?: string }) {
     super();
     if (args) {
-      this.id = args.id ?? nanoid();
+      this.id = args.uniquenessKey ?? nanoid();
       this.userId = args.userId;
       this.balance = args.balance ?? 0;
+      this.index = args.id;
     }
   }
 
@@ -36,7 +39,7 @@ export class Account extends Aggregate {
     this.balance -= amount;
   }
 
-  static of(args: { id?: string; userId: string; balance?: number }) {
+  static of(args: { id: number; userId: string; balance?: number; uniquenessKey?: string }) {
     return new Account(args);
   }
 

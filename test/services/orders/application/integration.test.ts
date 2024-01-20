@@ -95,7 +95,8 @@ describe('Order Service integration test', () => {
       await orderRepository.getManager().query('DELETE FROM `order`');
       await orderRepository.getManager().query('ALTER TABLE `order` AUTO_INCREMENT = 1');
       await productRepository.remove({ target: testProducts });
-      await accountRepository.remove({ target: testAccounts });
+      const target = await accountRepository.find({ conditions: { userId: 'orderTest1' } });
+      await accountRepository.remove({ target });
     });
 
     test('주문을 생성하고 재고 차감, account 출금을 한다.', async () => {
