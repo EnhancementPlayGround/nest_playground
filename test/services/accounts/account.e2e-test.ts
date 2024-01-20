@@ -55,7 +55,9 @@ describe('Account E2E test', () => {
     });
 
     afterAll(async () => {
-      await repository.remove({ target: testAccounts });
+      const [target1] = await repository.find({ conditions: { userId: 'e2eAccountTest1' } });
+      const [target2] = await repository.find({ conditions: { userId: 'e2eAccountTest2' } });
+      await repository.remove({ target: [target1, target2] });
     });
 
     test('userId로 account list를 조회한다.', async () => {
@@ -87,7 +89,9 @@ describe('Account E2E test', () => {
     });
 
     afterAll(async () => {
-      await repository.remove({ target: testAccounts });
+      const [target1] = await repository.find({ conditions: { userId: 'e2eAccountTest1' } });
+      const [target2] = await repository.find({ conditions: { userId: 'e2eAccountTest2' } });
+      await repository.remove({ target: [target1, target2] });
     });
 
     test('account의 잔액을 충전한다. - 단일 request', async () => {

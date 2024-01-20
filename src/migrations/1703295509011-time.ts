@@ -9,7 +9,7 @@ export class Time1703295509011 implements MigrationInterface {
       'CREATE TABLE IF NOT EXISTS `product` (`createdAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), `version` int NOT NULL DEFAULT "1", `id` varchar(255) NOT NULL, `name` varchar(255) NOT NULL, `price` int NOT NULL, `stock` int NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;',
     );
     await queryRunner.query(
-      'CREATE TABLE IF NOT EXISTS `account` (`createdAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), `id` varchar(255) NOT NULL, `userId` varchar(255) NOT NULL, `balance` int NOT NULL, INDEX `Idx_userId` (`userId`), PRIMARY KEY (`id`)) ENGINE=InnoDB;',
+      'CREATE TABLE `account` (`createdAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), `id` int NOT NULL AUTO_INCREMENT, `userId` varchar(255) NOT NULL, `balance` int NOT NULL, `uniquenessKey` varchar(255) NOT NULL, INDEX `Idx_userId` (`userId`), UNIQUE INDEX `IDX_35ecb03568c689a4a28151df0c` (`uniquenessKey`), PRIMARY KEY (`id`)) ENGINE=InnoDB;',
     );
     await queryRunner.query(
       'CREATE TABLE IF NOT EXISTS `order` (`createdAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), `id` varchar(255) NOT NULL, `userId` varchar(255) NOT NULL, `totalAmount` int NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;',

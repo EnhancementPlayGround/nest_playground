@@ -50,7 +50,8 @@ describe('Account Service integration test', () => {
     });
 
     afterAll(async () => {
-      await accountRepository.remove({ target: testAccounts });
+      const target = await accountRepository.find({ conditions: { userId: 'accountTest1' } });
+      await accountRepository.remove({ target });
     });
 
     test('어카운트 list를 조회한다.', async () => {
@@ -90,7 +91,8 @@ describe('Account Service integration test', () => {
     });
 
     afterAll(async () => {
-      await accountRepository.remove({ target: testAccounts });
+      const target = await accountRepository.find({ conditions: { userId: 'accountTest1' } });
+      await accountRepository.remove({ target });
     });
 
     test('어카운트의 잔액을 충전한다', async () => {

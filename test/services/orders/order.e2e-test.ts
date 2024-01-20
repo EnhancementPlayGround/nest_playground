@@ -90,7 +90,8 @@ describe('Order E2E test', () => {
 
     afterAll(async () => {
       await productRepository.remove({ target: testProducts });
-      await accountRepository.remove({ target: testAccounts });
+      const target = await accountRepository.find({ conditions: { userId: 'e2eOrderTest1' } });
+      await accountRepository.remove({ target });
       await orderRepository.getManager().query('DELETE FROM `order_line`');
       await orderRepository.getManager().query('DELETE FROM `order`');
       await orderRepository.getManager().query('ALTER TABLE `order` AUTO_INCREMENT = 1');
