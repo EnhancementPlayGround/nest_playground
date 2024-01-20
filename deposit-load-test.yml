@@ -1,7 +1,7 @@
 config:
   # This is a test server run by team Artillery
   # It's designed to be highly scalable
-  target: http://localhost:3000
+  target: http://localhost:4000
   phases:
     - duration: 60
       arrivalRate: 1

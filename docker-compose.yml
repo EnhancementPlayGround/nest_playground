@@ -13,7 +13,7 @@ services:
       dockerfile: ./Dockerfile.development
     environment:
       - NODE_ENV=development
-      - PORT=3000
+      - PORT=4000
       - DB_HOST=db
       - DB_PORT=3306
       - DB_USER=root
@@ -26,9 +26,34 @@ services:
       - CLOUDWATCH_STREAM_INFO=CLOUDWATCH_STREAM_INFO
       - CLOUDWATCH_STREAM_ERROR=CLOUDWATCH_STREAM_ERROR
     ports:
-      - '3000:3000'
+      - '4000:4000'
     restart: always
     volumes:
       - ./src/:/src/
     depends_on:
       - db
+  influxdb:
+    image: influxdb:1.8
+    ports:
+      - '8086:8086'
+    environment:
+      - INFLUXDB_DB=k6
+  grafana:
+    image: grafana/grafana:9.3.8
+    ports:
+      - '3000:3000'
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/
+  k6:
+    image: grafana/k6:latest
+    ports:
+      - '6565:6565'
+    environment:
+      - K6_OUT=influxdb=http://influxdb:8086/k6
+    command: run /scripts/account-deposit.script.js
+    volumes:
+      - ./scripts:/scripts
